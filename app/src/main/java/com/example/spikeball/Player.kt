@@ -1,10 +1,19 @@
 package com.example.spikeball
 
-class Player(name: String, mmr: Int)
+class Player
 {
+
+
     var mMatchMakingProbabilityScore = 0
-    var mMmr = mmr
-    var mName = name
+    var mMMR = 0
+    var mName = ""
+
+    constructor()
+    constructor(name: String, mmr: Int = 500)
+    {
+        mMMR = mmr
+        mName = name
+    }
 
     init{
         resetMMPScore()
