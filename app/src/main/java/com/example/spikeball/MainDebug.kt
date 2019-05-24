@@ -1,35 +1,36 @@
 package com.example.spikeball
 
+import kotlin.random.Random
+
 fun main()
 {
-    val player1 = Player("Timo",200)
-    val player2 = Player("Ben",200)
-    val player3 = Player("Freddy",200)
-    val player4 = Player("Thilo",200)
-    val player5 = Player("Peter",200)
-    val player6 = Player("Ugly",200)
+    val player1 = Player("Timo")
+    val player2 = Player("Ben")
+    val player3 = Player("Freddy")
+    val player4 = Player("Thilo")
+    val player5 = Player("Peter")
+    val player6 = Player("Ugly")
 
     val mgr = MatchupManager(mutableListOf(player1,player2,player3,player4,player5,player6))
 
-
-    (1..4)
-        .forEach { _ ->
-            val test = mgr.getNextMatchup()
-            mgr.confirmLastMatchupPlayed()
-            println(test.second.mMatchupID +" " + test.first)
-        }
-
-    mgr.addPlayer(Player("NewPenis",200))
-
-    println("\nAdd more players\n")
+    mgr.addPlayer(Player("Ingo"))
 
     var result = true
     while(result)
     {
         val test = mgr.getNextMatchup()
-        mgr.confirmLastMatchupPlayed()
-        println(test.second.mMatchupID +" " + test.first)
+        val win =Random.nextInt(2) == 1
+        println(win)
+        mgr.confirmLastMatchupAsFinished(win)
+        print(test.second.mMatchupID +" " + test.first + "\t")
+        for(player in mgr.mPlayers)
+        {
+            print("(Name/MMR: " +player.mName +"/"+player.mMMR + ") ")
+        }
+        println("")
+
         result = test.first
     }
 
 }
+
