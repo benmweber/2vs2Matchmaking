@@ -6,12 +6,7 @@ class MatchupManager(players:MutableList<Player>)
 {
     var mPlayers = players
     var mMatchupLog = mutableListOf<Matchup>()
-    var mPrevMatchup = Matchup()
-
-    init
-    {
-
-    }
+    var mPendingMatchup = Matchup()
 
     fun addPlayer(player:Player)
     {
@@ -22,7 +17,7 @@ class MatchupManager(players:MutableList<Player>)
     {
         for(player in mPlayers)
         {
-            val result = mPrevMatchup.mPlayers.find{ i -> i.mName == player.mName }
+            val result = mMatchupLog.last().mPlayers.find{ i -> i.mName == player.mName }
             if(result == null)
             {
                 player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore + 200
@@ -34,28 +29,42 @@ class MatchupManager(players:MutableList<Player>)
         }
     }
 
-    // after a match has been played, confirm the result and log the matchup
-    fun confirmMatchupPlayed(playedMatchup:Matchup)
-    {
-        mMatchupLog.add(playedMatchup)
-    }
 
-    fun confirmLastMatchupPlayed()
+  fun applyMMRChanges()
+  {
+        for(dataPair in mMatchupLog.last().mMMRUpdateResults)
+        {
+            val player = mPlayers.find { i -> i.mName == dataPair.first }
+            if(player != null)
+            {
+                player.mMMR += dataPair.second
+            }
+        }
+  }
+
+
+    // Set the result of the match (true if team 1 won, false if team 2 won)
+    fun confirmLastMatchupAsFinished(team1won : Boolean)
     {
+        // reset all probability scores
         for(player in mPlayers)
         {
             player.resetMMPScore()
         }
-        mMatchupLog.add(mPrevMatchup)
+
+        // update result of match and log
+        mPendingMatchup.setWinner(team1won)
+        mMatchupLog.add(mPendingMatchup)
+
+        // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupLog beforehand!)
+        applyMMRChanges()
         updateProbabilityScores()
     }
 
     // Gets a matchup that has not been played yet
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
-
         var resultingMatchup = Matchup()
-
 
         var finished = false
         var counter = 0
@@ -82,7 +91,7 @@ class MatchupManager(players:MutableList<Player>)
             counter++
         }
 
-        mPrevMatchup = resultingMatchup
+        mPendingMatchup = resultingMatchup
         return Pair(finished,resultingMatchup)
     }
 
