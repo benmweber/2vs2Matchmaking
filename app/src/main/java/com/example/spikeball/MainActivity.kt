@@ -3,6 +3,7 @@ package com.example.spikeball
 import android.os.Bundle
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,11 +20,17 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
     var mWhichGameType = 1
+    var mPlayerList = mutableListOf<Player>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        mPlayerList.clear()
+
+        recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
+        recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this)
         gameTypeSpinner.onItemSelectedListener = this
 
         // Create an ArrayAdapter using a simple spinner layout and languages array
@@ -88,7 +95,19 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun addPlayer(){
 
-        Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
+        if(!playerName.text.isEmpty()){
+            var name = playerName.text.toString()
+            Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
+            playerName.text.clear()
+            val pl = Player(name)
+            mPlayerList.add(pl)
+        }
+
+    }
+
+    fun deletePlayers(){
+
+        //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
         // Initialize a new instance of
         val builder = AlertDialog.Builder(this@MainActivity)
 
@@ -108,9 +127,8 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
-    }
 
-    fun deletePlayers(){}
+    }
 
     fun doSomeThing(){
         Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
