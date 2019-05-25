@@ -15,12 +15,12 @@ class MyRecyclerViewerAdapter(val items : MutableList<Player>, val context: Cont
     }
 
     // Inflates the item views
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.recyclerview_layout, parent, false))
     }
 
     // Binds each animal in the ArrayList to a view
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder?.playerType?.text = items[position].mName
     }
 
