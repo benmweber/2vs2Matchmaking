@@ -19,6 +19,13 @@ fun main()
     while(result)
     {
         val test = mgr.getNextMatchup()
+
+        println(test.second.mMatchupID)
+
+        val parsingTest = Matchup.parseMatchupString(test.second.mMatchupID)
+
+        println(parsingTest.mMatchupID)
+
         val win =Random.nextInt(2) == 1
         println(win)
         mgr.confirmLastMatchupAsFinished(win)
