@@ -19,9 +19,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
-    var mWhichGameType = 1
+    var mWhichGameType = 0
     var mPlayerList = mutableListOf<Player>()
-
+    var mSelectedPlayers = mutableListOf<Player>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +30,10 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         mPlayerList.clear()
 
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
-        recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this)
-        gameTypeSpinner.onItemSelectedListener = this
+        recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
 
+        //dropdownMenu
+        gameTypeSpinner.onItemSelectedListener = this
         // Create an ArrayAdapter using a simple spinner layout and languages array
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, mListOfGameTypes)
         // Set layout to use when the list of choices appear
@@ -69,6 +70,16 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(arg0: AdapterView<*>) {
 
     }
+    fun itemOnRecyclerViewClicked(item: Player){
+
+        if(mSelectedPlayers.contains(item)){
+            mSelectedPlayers.remove(item)
+        }
+        else{
+            mSelectedPlayers.add(item)
+        }
+        Toast.makeText(applicationContext,item.mName, Toast.LENGTH_SHORT).show()
+    }
 
     //Button Functions
     //add onClickListeners for all Buttons
@@ -78,7 +89,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         //val startButton = findViewById<Button>(R.id.startButton)
         doButton.setOnClickListener {
             // Do something in response to button
-            doSomeThing()
+            doSomething()
         }
         //val addPlayerButton = findViewById<Button>(R.id.addPlayerButton)
         addPlayerButton.setOnClickListener {
@@ -130,7 +141,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     }
 
-    fun doSomeThing(){
+    fun doSomething(){
         Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
     }
 
