@@ -11,7 +11,9 @@ import android.graphics.Color
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.provider.AlarmClock.EXTRA_MESSAGE
 
 //import android.widget.Button
 //import com.google.android.material.snackbar.Snackbar
@@ -23,7 +25,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
     var mWhichGameType = 0
     var mPlayerList = mutableListOf<Player>()
-    var mSelectedPlayers = mutableListOf<Player>()
+    //var mSelectedPlayers = mutableListOf<Player>()
 
 
     //preferences in which Players are saved
@@ -42,7 +44,6 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
 
         mPlayerList.clear()
-        mSelectedPlayers.clear()
         loadPlayersFromPrefs()
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
         recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
@@ -135,7 +136,6 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         }
     }
 
-
     fun addPlayer(){
 
         if(playerName.text.isNotEmpty()){
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             var name = playerName.text.toString()
             Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
             playerName.text.clear()
-            val pl = Player(name)
+            val pl = Player(name,500)
 
             mPlayerList.add(pl)
             mEditorOfSharedPrefsForPlayerList!!.putString("Player" + mPlayerList.indexOf(pl).toString(), pl.mName)
@@ -215,10 +215,68 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun doGameType(){
         Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
+
+        when(mWhichGameType){
+            0 -> startEndlosspiel()
+            1 -> startTurnier()
+            2 -> showStats()
+        }
     }
 
-    fun startEndlosspiel(){}
-    fun startTurnier(){}
-    fun showStats(){}
+    fun startEndlosspiel(){
+
+        
+    }
+
+    fun startTurnier(){
+
+    }
+
+    fun showStats(){
+
+        var selectedPlayers = mutableListOf<Player>()
+
+        mPlayerList.forEachIndexed { index, player ->
+
+            if(player.mIsChecked){
+                selectedPlayers.add(player)
+            }
+        }
+
+        if(selectedPlayers.isEmpty()){
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+
+            // Set the alert dialog title
+            builder.setTitle("Stats")
+
+            builder.setMessage("no players selected dipshit")
+            builder.setNeutralButton("OK, i guess i suck") { _, _ -> }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+        }
+        else {
+
+            val arrayOfSelectedPlayers = arrayOfNulls<String>(selectedPlayers.size)
+            arrayOfSelectedPlayers.forEachIndexed { index, _ ->
+                arrayOfSelectedPlayers[index] =
+                    "Name: " + selectedPlayers[index].mName + ", MMR:" + selectedPlayers[index].mMMR.toString()
+            }
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+
+            // Set the alert dialog title
+            builder.setTitle("Stats")
+
+            builder.setItems(arrayOfSelectedPlayers) { _, _ -> }
+            builder.setNeutralButton("OK") { _, _ -> }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+        }
+    }
 
 }
