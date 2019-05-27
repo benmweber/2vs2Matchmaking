@@ -7,6 +7,7 @@ class Player
     var mMatchMakingProbabilityScore = 0
     var mMMR = 0
     var mName = ""
+    var mIsChecked = false
 
     constructor()
     constructor(name: String, mmr: Int = 500)

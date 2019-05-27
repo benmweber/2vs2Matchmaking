@@ -23,6 +23,7 @@ class MyRecyclerViewerAdapter(private val items : MutableList<Player>, private v
     // Binds each animal in the ArrayList to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //holder?.playerType?.text = items[position].mName
+        holder.playerType.isChecked = items[position].mIsChecked
         holder.bind(items[position], clickListener)
     }
 

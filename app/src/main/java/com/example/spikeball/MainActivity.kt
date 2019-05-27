@@ -10,6 +10,8 @@ import android.view.View
 import android.graphics.Color
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 
 //import android.widget.Button
 //import com.google.android.material.snackbar.Snackbar
@@ -23,14 +25,28 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     var mPlayerList = mutableListOf<Player>()
     var mSelectedPlayers = mutableListOf<Player>()
 
+
+    //preferences in which Players are saved
+    val mNameOfSharedPrefForPlayerList = "sharedPrefForPlayerList"
+    var mSharedPrefsForPlayerList: SharedPreferences? = null
+    var mEditorOfSharedPrefsForPlayerList: SharedPreferences.Editor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mPlayerList.clear()
 
+        //Init of preferences in which Players are saved
+        mSharedPrefsForPlayerList = this.getSharedPreferences(mNameOfSharedPrefForPlayerList, Context.MODE_PRIVATE)
+        mEditorOfSharedPrefsForPlayerList = mSharedPrefsForPlayerList!!.edit()
+
+
+        mPlayerList.clear()
+        mSelectedPlayers.clear()
+        loadPlayersFromPrefs()
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
         recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+
 
         //dropdownMenu
         gameTypeSpinner.onItemSelectedListener = this
@@ -70,26 +86,20 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(arg0: AdapterView<*>) {
 
     }
-    fun itemOnRecyclerViewClicked(item: Player){
 
-        if(mSelectedPlayers.contains(item)){
-            mSelectedPlayers.remove(item)
-        }
-        else{
-            mSelectedPlayers.add(item)
-        }
-        Toast.makeText(applicationContext,item.mName, Toast.LENGTH_SHORT).show()
+    fun itemOnRecyclerViewClicked(item: Player){
+        item.mIsChecked = !item.mIsChecked
+        //Toast.makeText(applicationContext,item.mIsChecked.toString(), Toast.LENGTH_SHORT).show()
     }
 
     //Button Functions
     //add onClickListeners for all Buttons
-
     fun initButtons(){
 
         //val startButton = findViewById<Button>(R.id.startButton)
         doButton.setOnClickListener {
             // Do something in response to button
-            doSomething()
+            doGameType()
         }
         //val addPlayerButton = findViewById<Button>(R.id.addPlayerButton)
         addPlayerButton.setOnClickListener {
@@ -104,44 +114,106 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         }
     }
 
+    fun loadPlayersFromPrefs(){
+
+        var i = 0
+        var isNotEmpty = true
+
+        while(isNotEmpty){
+
+            if(mSharedPrefsForPlayerList!!.contains("Player" + i.toString())){
+
+                var nameOfPlayerEntryInPref =  mSharedPrefsForPlayerList!!.getString("Player" + i.toString(), "blank")
+                var mmrOfPlayerEntryInPref = mSharedPrefsForPlayerList!!.getInt(nameOfPlayerEntryInPref, 0)
+                var newPl = Player(nameOfPlayerEntryInPref, mmrOfPlayerEntryInPref)
+                mPlayerList.add(newPl)
+                i++
+            }
+            else{
+                isNotEmpty = false
+            }
+        }
+    }
+
+
     fun addPlayer(){
 
-        if(!playerName.text.isEmpty()){
+        if(playerName.text.isNotEmpty()){
+
             var name = playerName.text.toString()
             Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
             playerName.text.clear()
             val pl = Player(name)
+
             mPlayerList.add(pl)
+            mEditorOfSharedPrefsForPlayerList!!.putString("Player" + mPlayerList.indexOf(pl).toString(), pl.mName)
+            mEditorOfSharedPrefsForPlayerList!!.putInt(name+"MMR", pl.mMMR)
+            mEditorOfSharedPrefsForPlayerList!!.apply()
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
 
     }
 
     fun deletePlayers(){
 
+
         //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
         // Initialize a new instance of
         val builder = AlertDialog.Builder(this@MainActivity)
 
         // Set the alert dialog title
-        builder.setTitle("App background color")
+        builder.setTitle("Deletion of selected Players")
 
         // Display a message on alert dialog
-        builder.setMessage("Are you want to set the app background color to RED?")
+        builder.setMessage("Are you sure you want to delete the selected Players? They will also be deleted in realLife")
 
         // Set a positive button and its click listener on alert dialog
-        builder.setPositiveButton("YES"){ dialog, which ->
+        builder.setPositiveButton("YES FUCK THEM!"){ dialog, which ->
             // Do something when user press the positive button
-            Toast.makeText(applicationContext,"Ok, we change the app background.",Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext,"yeeeesch Fuck THEM. We dont need them",Toast.LENGTH_SHORT).show()
 
-            // Change the app background color
-            root_layout.setBackgroundColor(Color.RED)
+            var originalListSize = mPlayerList.size
+
+
+            var i = 0
+            while(i < mPlayerList.size){
+                if(mPlayerList[i].mIsChecked){
+                    mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
+                    mEditorOfSharedPrefsForPlayerList!!.remove(mPlayerList[i].mName + "MMR")
+                    mEditorOfSharedPrefsForPlayerList!!.apply()
+                    mPlayerList.removeAt(i)
+                }
+                else{
+                    i++
+                }
+            }
+
+            var newListSize = mPlayerList.size
+
+            //rearrranging position of players in Prefs
+            mPlayerList.forEachIndexed { index, player ->
+                mEditorOfSharedPrefsForPlayerList!!.putString("Player" + index.toString(), player.mName)
+                mEditorOfSharedPrefsForPlayerList!!.apply()
+            }
+            //deleting the duplicates in prefs
+            for(l in newListSize until originalListSize){
+                mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
+                mEditorOfSharedPrefsForPlayerList!!.apply()
+            }
+
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+
+        }
+        builder.setNegativeButton("No.. pls nOooo"){dialog, which ->
+            //Do something when user press the negativ button
+
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
 
     }
 
-    fun doSomething(){
+    fun doGameType(){
         Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
     }
 
