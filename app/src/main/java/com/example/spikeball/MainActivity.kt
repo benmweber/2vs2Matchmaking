@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
     var mWhichGameType = 0
     var mPlayerList = mutableListOf<Player>()
-    //var mSelectedPlayers = mutableListOf<Player>()
+
+
 
 
     //preferences in which Players are saved
@@ -125,7 +126,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             if(mSharedPrefsForPlayerList!!.contains("Player" + i.toString())){
 
                 var nameOfPlayerEntryInPref =  mSharedPrefsForPlayerList!!.getString("Player" + i.toString(), "blank")
-                var mmrOfPlayerEntryInPref = mSharedPrefsForPlayerList!!.getInt(nameOfPlayerEntryInPref, 0)
+                var mmrOfPlayerEntryInPref = mSharedPrefsForPlayerList!!.getInt(nameOfPlayerEntryInPref+"MMR", 0)
                 var newPl = Player(nameOfPlayerEntryInPref, mmrOfPlayerEntryInPref)
                 mPlayerList.add(newPl)
                 i++
@@ -214,7 +215,8 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     }
 
     fun doGameType(){
-        Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
+
+        //Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
 
         when(mWhichGameType){
             0 -> startEndlosspiel()
@@ -225,7 +227,39 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun startEndlosspiel(){
 
-        
+        var selectedPlayers = mutableListOf<Player>()
+
+        mPlayerList.forEachIndexed { index, player ->
+
+            if(player.mIsChecked){
+                selectedPlayers.add(player)
+            }
+        }
+        if(selectedPlayers.isEmpty() || selectedPlayers.size < 4){
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+
+            // Set the alert dialog title
+            builder.setTitle("Stats")
+
+            builder.setMessage("not enough players selected dipshit")
+            builder.setNeutralButton("OK, i guess i suck") { _, _ -> }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+        }
+        else{
+
+            val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
+            val matchup = matchupManager.getNextMatchup()
+            textView6.text = matchup.second.mPlayers[0].mName
+            textView7.text = matchup.second.mPlayers[1].mName
+            textView8.text = matchup.second.mPlayers[2].mName
+            textView9.text = matchup.second.mPlayers[3].mName
+        }
+
+
     }
 
     fun startTurnier(){

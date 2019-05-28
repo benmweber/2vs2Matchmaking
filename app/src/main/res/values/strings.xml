@@ -3,11 +3,14 @@
 
 
     <string name="action_settings">Settings</string>
-    <string name="Do">Do</string>
+    <string name="Do">lul</string>
     <string name="team1">Team 1</string>
     <string name="team2">Team 2</string>
-    <string name="spieler1">Spieler 1</string>
-    <string name="spieler2">Spieler 2</string>
+    <string name="spieler1">Spieler 1:</string>
+    <string name="spieler2">Spieler 2:</string>
+    <string name="spieler3">Spieler 3:</string>
+    <string name="Spieler4">Spieler 4:</string>
+    <string name="vs">VS</string>
     <string name="fertig">Fertig!</string>
     <string name="turnier_stop">Turnier stoppen</string>
     <string name="spieler">Spieler</string>
