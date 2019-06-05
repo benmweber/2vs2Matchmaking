@@ -18,7 +18,7 @@ class Matchup {
         mPlayers = listOf(team1.mPlayer1, team1.mPlayer2, team2.mPlayer1, team2.mPlayer2)
         mTeamConstellation = listOf(team1, team2)
         mTeamConstellation = mTeamConstellation.sortedWith(compareBy({ it.mPlayerCombinationID }))
-        mMatchupID = mTeamConstellation[0].mPlayerCombinationID + "VS" + mTeamConstellation[1].mPlayerCombinationID
+        mMatchupID = mTeamConstellation[0].mPlayerCombinationID + "!" + mTeamConstellation[1].mPlayerCombinationID
         mMMRGlobalAvg = (mTeamConstellation[0].mCombinedMMR + mTeamConstellation[1].mCombinedMMR) / 2
     }
 
@@ -39,6 +39,7 @@ class Matchup {
         }
     }
 
+    // calculates the mmr change for a player depending of the result of the game and stores this information in the mMMRUpdateResults member variable for later application
     private fun updateMMRforPlayer(player: Player, isWinner: Boolean)  {
 
         var mmrChange = 0
@@ -78,6 +79,20 @@ class Matchup {
         mMMRUpdateResults.add(mmrChangeData)
     }
 
+
+    companion object HelperFunctions
+    {
+        // parses strings in the format "name&name!name&name" (same as the matchupID of any matchup object) and creates a matchup object from this information,
+        // where the first two names are team 1 and the last two names are team 2
+        fun parseMatchupString(str : String) : Matchup
+        {
+            val teams = str.split("!")
+            val playersTeam1 = teams[0].split("&")
+            val playersTeam2 = teams[1].split("&")
+
+            return Matchup(Team(Player(playersTeam1[0],-1),Player(playersTeam1[1],-1)),Team(Player(playersTeam2[0],-1),Player(playersTeam2[1],-1)))
+        }
+    }
 
 }
 

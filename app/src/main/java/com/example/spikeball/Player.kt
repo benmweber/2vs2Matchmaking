@@ -2,8 +2,6 @@ package com.example.spikeball
 
 class Player
 {
-
-
     var mMatchMakingProbabilityScore = 0
     var mMMR = 0
     var mName = ""
