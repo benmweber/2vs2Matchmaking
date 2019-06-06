@@ -1,0 +1,1 @@
+This projects revolves around impementing an app that generates matchups for 2v2 style (real life) sport games (e.g.: Spikeball, Beach Volleyball) and also offers the ability to rank each individual compared to other players.
