@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
-    var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
+    var mListOfGameTypes = arrayOf("FreeMode", "Turnier", "ShowStats")
     var mWhichGameType = 0
     var mPlayerList = mutableListOf<Player>()
 
@@ -216,18 +216,23 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun doGameType(){
 
-        //Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
-
         when(mWhichGameType){
-            0 -> startEndlosspiel()
+            0 -> startFreeMode()
             1 -> startTurnier()
             2 -> showStats()
         }
     }
 
-    fun startEndlosspiel(){
+    fun startFreeMode(){
 
-        var selectedPlayers = mutableListOf<Player>()
+        val intent = Intent(this, FreeMode::class.java)
+        startActivity(intent)
+
+
+
+
+
+        /*var selectedPlayers = mutableListOf<Player>()
 
         mPlayerList.forEachIndexed { index, player ->
 
@@ -257,7 +262,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             textView7.text = matchup.second.mPlayers[1].mName
             textView8.text = matchup.second.mPlayers[2].mName
             textView9.text = matchup.second.mPlayers[3].mName
-        }
+        }*/
 
 
     }

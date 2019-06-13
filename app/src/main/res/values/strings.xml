@@ -20,12 +20,13 @@
     <string name="mmrdiff">MMRDiff:</string>
     <string name="showStats">Show Stats</string>
     <string name="löschen">Spieler löschen</string>
-    <string name ="skip">Skip Duel</string>
+    <string name="skip">Skip Duel</string>
 
     <string-array name="Spieloptionen">
         <item>Endlosspiel</item>
         <item>Turnier</item>
         <item>Custom</item>
     </string-array>
+    <string name="title_activity_free_mode">FreeMode</string>
 
 </resources>
