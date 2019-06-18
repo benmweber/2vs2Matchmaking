@@ -5,30 +5,73 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".FreeMode">
-
-    <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
+        tools:context=".FreeMode" android:id="@+id/coordinatorLayout">
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <include layout="@layout/content_free_mode"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_dialog_email"/>
-
+        <TextView
+                android:text="@string/vs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView32" android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/player1box" android:layout_marginStart="28dp"
+                app:layout_constraintEnd_toStartOf="@+id/player3box" android:layout_marginEnd="8dp"
+                app:layout_constraintHorizontal_bias="0.309" android:layout_marginTop="32dp"
+                app:layout_constraintTop_toBottomOf="@+id/textView20"/>
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="25dp"
+                android:id="@+id/player3box" android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@+id/textView20"
+                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/textView20"/>
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="25dp"
+                android:id="@+id/player1box" android:textSize="18sp"
+                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/textView20"
+                app:layout_constraintStart_toStartOf="@+id/textView20" android:layout_marginStart="4dp"/>
+        <TextView
+                android:text="@string/matchupTitle"
+                android:layout_width="280dp"
+                android:layout_height="34dp" android:id="@+id/textView20"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="48dp"
+                android:layout_marginTop="52dp" app:layout_constraintTop_toTopOf="parent" android:textSize="24sp"/>
+        <Button
+                android:text="@string/finished"
+                android:layout_width="190dp"
+                android:layout_height="48dp"
+                android:id="@+id/button"
+                app:layout_constraintStart_toStartOf="@+id/button2"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/button2"/>
+        <Button
+                android:text="@string/skip"
+                android:layout_width="189dp"
+                android:layout_height="48dp"
+                android:id="@+id/button2"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/button3"
+                app:layout_constraintStart_toStartOf="@+id/button3"/>
+        <Button
+                android:text="@string/manualMatchup"
+                android:layout_width="189dp"
+                android:layout_height="56dp"
+                android:id="@+id/button3"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="108dp" android:layout_marginTop="396dp"
+                app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="25dp"
+                android:id="@+id/player2box" android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/player1box"
+                app:layout_constraintStart_toStartOf="@+id/player1box"/>
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="25dp"
+                android:id="@+id/player4box" android:textSize="18sp"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/player3box"
+                app:layout_constraintEnd_toEndOf="@+id/player3box"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

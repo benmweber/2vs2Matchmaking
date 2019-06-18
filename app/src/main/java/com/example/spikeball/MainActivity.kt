@@ -226,18 +226,12 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     fun startFreeMode(){
 
         val intent = Intent(this, FreeMode::class.java)
-        startActivity(intent)
-
-
-
-
-
-        /*var selectedPlayers = mutableListOf<Player>()
+        var selectedPlayers = arrayListOf<String>()
 
         mPlayerList.forEachIndexed { index, player ->
 
             if(player.mIsChecked){
-                selectedPlayers.add(player)
+                selectedPlayers.add(player.mName)
             }
         }
         if(selectedPlayers.isEmpty() || selectedPlayers.size < 4){
@@ -255,14 +249,11 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
         }
         else{
+            intent.putExtra("selectedPlayerList",selectedPlayers)
 
-            val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
-            val matchup = matchupManager.getNextMatchup()
-            textView6.text = matchup.second.mPlayers[0].mName
-            textView7.text = matchup.second.mPlayers[1].mName
-            textView8.text = matchup.second.mPlayers[2].mName
-            textView9.text = matchup.second.mPlayers[3].mName
-        }*/
+            startActivity(intent)
+
+        }
 
 
     }

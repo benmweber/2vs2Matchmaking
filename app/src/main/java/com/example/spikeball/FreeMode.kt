@@ -13,18 +13,24 @@ class FreeMode : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_free_mode)
-        setSupportActionBar(toolbar)
 
 
+       var playerNames = intent.getStringArrayListExtra("selectedPlayerList")
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        displayMatchup(Matchup(Team(Player(playerNames[0]),Player(playerNames[1])),Team(Player(playerNames[2]),Player(playerNames[3]))))
     }
 
     fun checkForSelectedPlayers(){
 
+    }
+
+    fun displayMatchup(matchupToDisplay:Matchup){
+
+        player1box.text = matchupToDisplay.mTeamConstellation[0].mPlayer1.mName
+        player2box.text = matchupToDisplay.mTeamConstellation[0].mPlayer2.mName
+
+        player3box.text = matchupToDisplay.mTeamConstellation[1].mPlayer1.mName
+        player4box.text = matchupToDisplay.mTeamConstellation[1].mPlayer2.mName
     }
 
 }
