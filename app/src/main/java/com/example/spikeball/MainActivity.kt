@@ -20,26 +20,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
-    var mListOfGameTypes = arrayOf("FreeMode", "Turnier", "ShowStats")
-    var mWhichGameType = 0
+    private var mListOfGameTypes = arrayOf("FreeMode", "Turnier", "ShowStats")
+    private var mWhichGameType = 0
 
-    val data = DataManager(this)
-
-    //preferences in which Players are saved
-    val mNameOfSharedPrefForPlayerList = "sharedPrefForPlayerList"
-    var mSharedPrefsForPlayerList: SharedPreferences? = null
-    var mEditorOfSharedPrefsForPlayerList: SharedPreferences.Editor? = null
+    private val data = DataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         data.loadPlayers()
-
-        //Init of preferences in which Players are saved
-        mSharedPrefsForPlayerList = this.getSharedPreferences(mNameOfSharedPrefForPlayerList, Context.MODE_PRIVATE)
-        mEditorOfSharedPrefsForPlayerList = mSharedPrefsForPlayerList!!.edit()
 
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
         recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
@@ -124,8 +114,6 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun deletePlayers(){
 
-/*
-
         //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
         // Initialize a new instance of
         val builder = AlertDialog.Builder(this@MainActivity)
@@ -141,46 +129,17 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             // Do something when user press the positive button
             Toast.makeText(applicationContext,"yeeeesch Fuck THEM. We dont need them",Toast.LENGTH_SHORT).show()
 
-            var originalListSize = mPlayerList.size
+            data.deleteAllCheckedPlayers()
 
-
-            var i = 0
-            while(i < mPlayerList.size){
-                if(mPlayerList[i].mIsChecked){
-                    mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
-                    mEditorOfSharedPrefsForPlayerList!!.remove(mPlayerList[i].mName + "MMR")
-                    mEditorOfSharedPrefsForPlayerList!!.apply()
-                    mPlayerList.removeAt(i)
-                }
-                else{
-                    i++
-                }
-            }
-
-            var newListSize = mPlayerList.size
-
-            //rearrranging position of players in Prefs
-            mPlayerList.forEachIndexed { index, player ->
-                mEditorOfSharedPrefsForPlayerList!!.putString("Player" + index.toString(), player.mName)
-                mEditorOfSharedPrefsForPlayerList!!.apply()
-            }
-            //deleting the duplicates in prefs
-            for(l in newListSize until originalListSize){
-                mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
-                mEditorOfSharedPrefsForPlayerList!!.apply()
-            }
-
-            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
-
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
+
         builder.setNegativeButton("No.. pls nOooo"){dialog, which ->
             //Do something when user press the negativ button
-
         }
+
         val dialog: AlertDialog = builder.create()
         dialog.show()
-*/
-
     }
 
     fun doGameType(){

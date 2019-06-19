@@ -4,20 +4,21 @@ import kotlin.random.Random
 
 class MatchupManager(players:MutableList<Player>)
 {
-    var mPlayers = players
-    var mMatchupLog = mutableListOf<Matchup>()
-    var mPendingMatchup = Matchup()
+    private var mPlayers = players
+    private var mMatchupHistory = mutableListOf<Matchup>()
+    private var mPendingMatchup = Matchup()
+    var mMatchupHistoryResetFlag = false
 
     fun addPlayer(player:Player)
     {
         mPlayers.add(player)
     }
 
-    fun updateProbabilityScores()
+    private fun updateProbabilityScores()
     {
         for(player in mPlayers)
         {
-            val result = mMatchupLog.last().mPlayers.find{ i -> i.mName == player.mName }
+            val result = mMatchupHistory.last().mPlayers.find{ i -> i.mName == player.mName }
             if(result == null)
             {
                 player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore + 200
@@ -29,10 +30,9 @@ class MatchupManager(players:MutableList<Player>)
         }
     }
 
-
-  fun applyMMRChanges()
+  private fun applyMMRChanges()
   {
-        for(dataPair in mMatchupLog.last().mMMRUpdateResults)
+        for(dataPair in mMatchupHistory.last().mMMRUpdateResults)
         {
             val player = mPlayers.find { i -> i.mName == dataPair.first }
             if(player != null)
@@ -54,14 +54,23 @@ class MatchupManager(players:MutableList<Player>)
 
         // update result of match and log
         mPendingMatchup.setWinner(team1won)
-        mMatchupLog.add(mPendingMatchup)
+        mMatchupHistory.add(mPendingMatchup)
 
-        // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupLog beforehand!)
+        // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
         applyMMRChanges()
         updateProbabilityScores()
     }
 
     // Gets a matchup that has not been played yet
+
+
+    // Example: 4 players -> A B C D
+    // AB vs CD
+    // AC vs BD
+    // AD vs BC
+    // -> 3 matchups
+
+
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
         var resultingMatchup = Matchup()
@@ -82,7 +91,7 @@ class MatchupManager(players:MutableList<Player>)
 
             finished = true
 
-            for(mtchp in mMatchupLog)
+            for(mtchp in mMatchupHistory)
             {
                 if(resultingMatchup.mMatchupID == mtchp.mMatchupID) {
                     finished = false
@@ -95,12 +104,13 @@ class MatchupManager(players:MutableList<Player>)
         return Pair(finished,resultingMatchup)
     }
 
- /*   fun GetTourneeMatchups() : List<Matchup>
+    fun resetMatchupHistory()
     {
+        mMatchupHistory.clear()
+        mMatchupHistoryResetFlag = true
+    }
 
-    }*/
-
-    fun  getPlayerBasedOnScores(forbiddenPlayers:List<Player> = emptyList()) : Player
+    private fun getPlayerBasedOnScores(forbiddenPlayers:List<Player> = emptyList()) : Player
     {
         var finished = false
         var resultingPlayer = Player("ERROR",0)

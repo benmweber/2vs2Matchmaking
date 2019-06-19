@@ -2,38 +2,73 @@ package com.example.spikeball
 
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_free_mode.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class FreeMode : AppCompatActivity() {
 
-
-    val data = DataManager(this)
+    private val data = DataManager(this)
+    private var matchupMgr : MatchupManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_free_mode)
 
 
+        Toast.makeText(applicationContext,"LUL", Toast.LENGTH_SHORT).show()
+
+
         // get player data by using names of selected players
+        val selectedPlayerNames = intent.getStringArrayListExtra("selectedPlayerList")
 
-       val selectedPlayerNames = intent.getStringArrayListExtra("selectedPlayerList")
-
-
-        // generate matchups
-
-        //val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
+        var newList = ArrayList<Player>()
 
         data.loadPlayers()
 
-        var lul = data.getPlayer("timo")
-        lul!!.mName = "timoNEW" // works!
+        for(name in selectedPlayerNames)
+        {
+            data.getPlayer(name)?.let { newList.add(it) }
+        }
 
+        // initialize matchup manager
+
+        matchupMgr = MatchupManager(newList)
+
+        // display first matchup
+        displayMatchup(matchupMgr!!.getNextMatchup().second)
+
+        // buttons
+        finishedButton.setOnClickListener {
+            // confirm outcome of last match, unless history has been reset last time button was pressed
+            // TODO: build dialogue
+            if(!matchupMgr!!.mMatchupHistoryResetFlag)
+            {
+                matchupMgr!!.confirmLastMatchupAsFinished(true)
+            }
+            else
+            {
+                matchupMgr!!.mMatchupHistoryResetFlag = false
+            }
+
+            // generate next matchup
+            val nxtMatchup = matchupMgr!!.getNextMatchup()
+
+            // check if algorithm terminated because all matchups have been played
+            if(nxtMatchup.first)
+            {
+                displayMatchup(nxtMatchup.second)
+            }
+            else
+            {
+                Toast.makeText(applicationContext,"ALL MATCHUPS PLAYED, RESETTING...", Toast.LENGTH_SHORT).show()
+                matchupMgr!!.resetMatchupHistory()
+            }
+        }
     }
-
-
 
     fun displayMatchup(matchupToDisplay:Matchup){
 
