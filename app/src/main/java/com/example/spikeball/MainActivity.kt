@@ -35,12 +35,11 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         setContentView(R.layout.activity_main)
 
 
+        data.loadPlayers()
+
         //Init of preferences in which Players are saved
         mSharedPrefsForPlayerList = this.getSharedPreferences(mNameOfSharedPrefForPlayerList, Context.MODE_PRIVATE)
         mEditorOfSharedPrefsForPlayerList = mSharedPrefsForPlayerList!!.edit()
-
-
-        // init data manager
 
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
         recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
@@ -125,6 +124,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     fun deletePlayers(){
 
+/*
 
         //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
         // Initialize a new instance of
@@ -179,6 +179,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+*/
 
     }
 
@@ -196,7 +197,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         val intent = Intent(this, FreeMode::class.java)
         var selectedPlayers = arrayListOf<String>()
 
-        mPlayerList.forEachIndexed { index, player ->
+        data.mPlayers.forEachIndexed { index, player ->
 
             if(player.mIsChecked){
                 selectedPlayers.add(player.mName)
@@ -234,7 +235,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
         var selectedPlayers = mutableListOf<Player>()
 
-        mPlayerList.forEachIndexed { index, player ->
+        data.mPlayers.forEachIndexed { index, player ->
 
             if(player.mIsChecked){
                 selectedPlayers.add(player)

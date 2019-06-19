@@ -26,9 +26,10 @@ class FreeMode : AppCompatActivity() {
 
         //val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
 
-        val data = DataManager(this)
+        data.loadPlayers()
 
-        player3box.text = DataManager.loadPlayers()[0].mName
+        var lul = data.getPlayer("timo")
+        lul!!.mName = "timoNEW" // works!
 
     }
 
