@@ -1,6 +1,7 @@
 package com.example.spikeball
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
@@ -8,21 +9,30 @@ import kotlinx.android.synthetic.main.activity_free_mode.*
 
 class FreeMode : AppCompatActivity() {
 
-    //val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
+
+    val data = DataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_free_mode)
 
 
-       var playerNames = intent.getStringArrayListExtra("selectedPlayerList")
+        // get player data by using names of selected players
 
-        displayMatchup(Matchup(Team(Player(playerNames[0]),Player(playerNames[1])),Team(Player(playerNames[2]),Player(playerNames[3]))))
+       val selectedPlayerNames = intent.getStringArrayListExtra("selectedPlayerList")
+
+
+        // generate matchups
+
+        //val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
+
+        val data = DataManager(this)
+
+        player3box.text = DataManager.loadPlayers()[0].mName
+
     }
 
-    fun checkForSelectedPlayers(){
 
-    }
 
     fun displayMatchup(matchupToDisplay:Matchup){
 
@@ -31,6 +41,7 @@ class FreeMode : AppCompatActivity() {
 
         player3box.text = matchupToDisplay.mTeamConstellation[1].mPlayer1.mName
         player4box.text = matchupToDisplay.mTeamConstellation[1].mPlayer2.mName
+
     }
 
 }
