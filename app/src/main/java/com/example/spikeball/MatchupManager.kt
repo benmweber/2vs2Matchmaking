@@ -4,8 +4,8 @@ import kotlin.random.Random
 
 class MatchupManager(players:MutableList<Player>)
 {
-    var mPlayers = players
-    var mMatchupLog = mutableListOf<Matchup>()
+    private var mPlayers = players
+    private var mMatchupHistory = mutableListOf<Matchup>()
     var mPendingMatchup = Matchup()
 
     fun addPlayer(player:Player)
@@ -13,11 +13,12 @@ class MatchupManager(players:MutableList<Player>)
         mPlayers.add(player)
     }
 
-    fun updateProbabilityScores()
+    private fun updateProbabilityScores()
     {
         for(player in mPlayers)
         {
-            val result = mMatchupLog.last().mPlayers.find{ i -> i.mName == player.mName }
+            player.resetMMPScore()
+            val result = mMatchupHistory.last().mPlayers.find{ i -> i.mName == player.mName }
             if(result == null)
             {
                 player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore + 200
@@ -29,10 +30,9 @@ class MatchupManager(players:MutableList<Player>)
         }
     }
 
-
-  fun applyMMRChanges()
+  private fun applyMMRChanges()
   {
-        for(dataPair in mMatchupLog.last().mMMRUpdateResults)
+        for(dataPair in mMatchupHistory.last().mMMRUpdateResults)
         {
             val player = mPlayers.find { i -> i.mName == dataPair.first }
             if(player != null)
@@ -42,26 +42,42 @@ class MatchupManager(players:MutableList<Player>)
         }
   }
 
+    fun skipPendingMatchup()
+    {
+        // update result of match and log
+        mPendingMatchup.mSkipped = true
+        mMatchupHistory.add(mPendingMatchup)
+
+        // update mmr and new probabilities scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
+        updateProbabilityScores()
+    }
 
     // Set the result of the match (true if team 1 won, false if team 2 won)
     fun confirmLastMatchupAsFinished(team1won : Boolean)
     {
-        // reset all probability scores
-        for(player in mPlayers)
-        {
-            player.resetMMPScore()
-        }
-
         // update result of match and log
         mPendingMatchup.setWinner(team1won)
-        mMatchupLog.add(mPendingMatchup)
+        mMatchupHistory.add(mPendingMatchup)
 
-        // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupLog beforehand!)
+        // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
         applyMMRChanges()
         updateProbabilityScores()
     }
 
+    fun resetMatchupHistory()
+    {
+        // reset scores, add pending matchup temporarily to history, then clear, so that there is not the same matchup after reset
+        mMatchupHistory.add(mPendingMatchup)
+        updateProbabilityScores()
+        mMatchupHistory.clear()
+    }
+
     // Gets a matchup that has not been played yet
+    // Example: 4 players -> A B C D
+    // AB vs CD
+    // AC vs BD
+    // AD vs BC
+    // -> 3 matchups
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
         var resultingMatchup = Matchup()
@@ -69,7 +85,7 @@ class MatchupManager(players:MutableList<Player>)
         var finished = false
         var counter = 0
 
-        while(!finished && counter < 100000)
+        while(!finished && counter < 1000*mPlayers.size)
         {
             val tempPlayers = mutableListOf<Player>()
             for(i in 0..3)
@@ -82,9 +98,10 @@ class MatchupManager(players:MutableList<Player>)
 
             finished = true
 
-            for(mtchp in mMatchupLog)
+            for(mtchp in mMatchupHistory)
             {
-                if(resultingMatchup.mMatchupID == mtchp.mMatchupID) {
+                // if matchup already exists in history AND the according matchup is NOT a skipped one, keep rerolling
+                if(resultingMatchup.mMatchupID == mtchp.mMatchupID && !mtchp.mSkipped) {
                     finished = false
                 }
             }
@@ -95,12 +112,9 @@ class MatchupManager(players:MutableList<Player>)
         return Pair(finished,resultingMatchup)
     }
 
- /*   fun GetTourneeMatchups() : List<Matchup>
-    {
 
-    }*/
 
-    fun  getPlayerBasedOnScores(forbiddenPlayers:List<Player> = emptyList()) : Player
+    private fun getPlayerBasedOnScores(forbiddenPlayers:List<Player> = emptyList()) : Player
     {
         var finished = false
         var resultingPlayer = Player("ERROR",0)
