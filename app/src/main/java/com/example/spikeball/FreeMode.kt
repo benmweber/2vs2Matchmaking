@@ -1,13 +1,10 @@
 package com.example.spikeball
 
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-
 import kotlinx.android.synthetic.main.activity_free_mode.*
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 class FreeMode : AppCompatActivity() {
 
@@ -17,10 +14,6 @@ class FreeMode : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_free_mode)
-
-
-        Toast.makeText(applicationContext,"LUL", Toast.LENGTH_SHORT).show()
-
 
         // get player data by using names of selected players
         val selectedPlayerNames = intent.getStringArrayListExtra("selectedPlayerList")

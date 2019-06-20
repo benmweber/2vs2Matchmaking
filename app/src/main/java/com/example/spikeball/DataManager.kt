@@ -78,8 +78,11 @@ class DataManager {
             val shPref = mContext!!.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE)
             val gson = Gson()
             var json = shPref.getString(SP_PLAYER_NAME,null)
-            val type = object : TypeToken<ArrayList<Player>>() { }.type
-            mPlayers = gson.fromJson<ArrayList<Player>>(json, type)
+            if (json != null)
+            {
+                val type = object : TypeToken<ArrayList<Player>>() { }.type
+                mPlayers = gson.fromJson<ArrayList<Player>>(json, type)
+            }
         }
 
         fun saveMatchupHistory()
