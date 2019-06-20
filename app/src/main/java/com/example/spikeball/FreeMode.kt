@@ -87,6 +87,9 @@ class FreeMode : AppCompatActivity() {
     fun setupNextMatchup()
     {
         // dialog to pick players from a popup menu
+        var toast = Toast.makeText(applicationContext,"Just click on SKIP until the desired matchup is generated ;)", Toast.LENGTH_LONG)
+        toast.setGravity(0,0,100)
+        toast.show()
     }
 
     fun skipNextMatchup()
