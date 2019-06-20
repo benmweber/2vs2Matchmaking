@@ -12,29 +12,29 @@
 
         <TextView
                 android:text="@string/vs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView32" android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/player1box" android:layout_marginStart="28dp"
-                app:layout_constraintEnd_toStartOf="@+id/player3box" android:layout_marginEnd="8dp"
-                app:layout_constraintHorizontal_bias="0.309" android:layout_marginTop="32dp"
-                app:layout_constraintTop_toBottomOf="@+id/textView20"/>
-        <TextView
-                android:layout_width="88dp"
+                android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:id="@+id/textView32" android:textSize="18sp"
+                android:layout_marginTop="28dp"
+                app:layout_constraintTop_toBottomOf="@+id/textView20" android:layout_marginStart="152dp"
+                app:layout_constraintStart_toStartOf="@+id/textView20"/>
+        <TextView
+                android:layout_width="139dp"
+                android:layout_height="28dp"
                 android:id="@+id/player3box" android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@+id/textView20"
-                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/textView20"/>
+                android:layout_marginTop="12dp" app:layout_constraintTop_toBottomOf="@+id/textView20"
+        />
         <TextView
-                android:layout_width="88dp"
+                android:layout_width="132dp"
                 android:layout_height="25dp"
                 android:id="@+id/player1box" android:textSize="18sp"
-                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/textView20"
-                app:layout_constraintStart_toStartOf="@+id/textView20" android:layout_marginStart="4dp"/>
+                android:layout_marginTop="12dp" app:layout_constraintTop_toBottomOf="@+id/textView20"
+                app:layout_constraintStart_toStartOf="@+id/textView20"/>
         <TextView
                 android:text="@string/matchupTitle"
-                android:layout_width="280dp"
-                android:layout_height="34dp" android:id="@+id/textView20"
+                android:layout_width="338dp"
+                android:layout_height="31dp" android:id="@+id/textView20"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="48dp"
                 android:layout_marginTop="52dp" app:layout_constraintTop_toTopOf="parent" android:textSize="24sp"/>
         <Button
@@ -60,15 +60,15 @@
                 app:layout_constraintBottom_toTopOf="@+id/skipButton"
                 app:layout_constraintStart_toStartOf="@+id/skipButton"/>
         <TextView
-                android:layout_width="88dp"
-                android:layout_height="25dp"
+                android:layout_width="131dp"
+                android:layout_height="29dp"
                 android:id="@+id/player2box" android:textSize="18sp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/player1box"
                 app:layout_constraintStart_toStartOf="@+id/player1box"/>
         <TextView
-                android:layout_width="88dp"
-                android:layout_height="25dp"
+                android:layout_width="139dp"
+                android:layout_height="28dp"
                 android:id="@+id/player4box" android:textSize="18sp"
                 android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/player3box"
                 app:layout_constraintEnd_toEndOf="@+id/player3box"/>

@@ -22,7 +22,7 @@
     <string name="löschen">Spieler Löschen</string>
     <string name="skip">Skip</string>
 
-    <string name="matchupTitle">Next matchup:</string>
+    <string name="matchupTitle">Current matchup</string>
 
     <string-array name="Spieloptionen">
         <item>Endlosspiel</item>

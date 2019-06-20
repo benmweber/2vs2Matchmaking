@@ -11,6 +11,7 @@ class Matchup {
     var mWinner = Team()
     var mLoser = Team()
     var mMMRUpdateResults = mutableListOf<Pair<String,Int>>()
+    var mSkipped = false
 
     constructor()
 
@@ -39,7 +40,9 @@ class Matchup {
         }
     }
 
+
     // calculates the mmr change for a player depending of the result of the game and stores this information in the mMMRUpdateResults member variable for later application
+    // TODO: refactor because of call by ref
     private fun updateMMRforPlayer(player: Player, isWinner: Boolean)  {
 
         var mmrChange = 0
@@ -78,22 +81,6 @@ class Matchup {
         val mmrChangeData = Pair(player.mName,mmrChange)
         mMMRUpdateResults.add(mmrChangeData)
     }
-
-
-    companion object HelperFunctions
-    {
-        // parses strings in the format "name&name!name&name" (same as the matchupID of any matchup object) and creates a matchup object from this information,
-        // where the first two names are team 1 and the last two names are team 2
-        fun parseMatchupString(str : String) : Matchup
-        {
-            val teams = str.split("!")
-            val playersTeam1 = teams[0].split("&")
-            val playersTeam2 = teams[1].split("&")
-
-            return Matchup(Team(Player(playersTeam1[0],-1),Player(playersTeam1[1],-1)),Team(Player(playersTeam2[0],-1),Player(playersTeam2[1],-1)))
-        }
-    }
-
 }
 
 

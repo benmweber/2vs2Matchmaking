@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         if(playerName.text.isNotEmpty()){
 
             var name = playerName.text.toString()
-            Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
+            //Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
             playerName.text.clear()
 
             data.addPlayer(Player(name,500))
