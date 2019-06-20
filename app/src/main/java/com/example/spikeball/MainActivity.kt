@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 
 //import android.widget.Button
 //import com.google.android.material.snackbar.Snackbar
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
         data.loadPlayers()
 

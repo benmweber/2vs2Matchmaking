@@ -1,5 +1,6 @@
 package com.example.spikeball
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -15,6 +16,8 @@ class FreeMode : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_free_mode)
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
         // get player data by using names of selected players
         val selectedPlayerNames = intent.getStringArrayListExtra("selectedPlayerList")
