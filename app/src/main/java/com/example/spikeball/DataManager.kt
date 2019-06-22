@@ -3,6 +3,7 @@ package com.example.spikeball
 import android.content.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.*
 
 
 class DataManager {
@@ -63,7 +64,7 @@ class DataManager {
             savePlayers()
         }
 
-        fun savePlayers()
+        fun savePlayers() : String
         {
             val shPref = mContext!!.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE)
             val editor = shPref.edit()
@@ -71,6 +72,7 @@ class DataManager {
             var json : String = gson.toJson(mPlayers)
             editor.putString(SP_PLAYER_NAME,json)
             editor.apply()
+            return json
         }
 
         fun loadPlayers()
@@ -104,4 +106,23 @@ class DataManager {
             mMatchupHistory = gson.fromJson<ArrayList<Matchup>>(json, type)
         }
 
+
+        fun exportToFile(context:Context) : String
+        {
+            //TODO: specify other directory, so that it isnt deleted upon app deinstallation
+            val path = context.getExternalFilesDir(null)
+            val letDirectory = File(path, "EXPORT")
+            letDirectory.mkdirs()
+            val file = File(letDirectory, "PlayersBKP.txt")
+            FileOutputStream(file).use {
+                it.write(savePlayers().toByteArray())
+            }
+            return path.absolutePath.toString()
+        }
+
+        fun loadFromFile()
+        {
+            //TODO: implement
+            //val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
+        }
 }

@@ -99,6 +99,10 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             // Do something in response to button
             deletePlayers()
         }
+
+        exportButton.setOnClickListener{
+            Toast.makeText(applicationContext, data.exportToFile(this), Toast.LENGTH_LONG).show()
+        }
     }
 
     fun addPlayer(){
@@ -137,7 +141,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
 
-        builder.setNegativeButton("No.. pls nOooo"){dialog, which ->
+        builder.setNegativeButton("No.. pls noooo"){dialog, which ->
             //Do something when user press the negativ button
         }
 
