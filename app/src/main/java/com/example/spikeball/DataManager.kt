@@ -120,9 +120,25 @@ class DataManager {
             return path.absolutePath.toString()
         }
 
-        fun loadFromFile()
+        fun importFromFile(context:Context) : String
         {
-            //TODO: implement
-            //val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
+            // read file
+            val path = context.getExternalFilesDir(null)
+            val letDirectory = File(path, "EXPORT")
+            val file = File(letDirectory, "PlayersBKP.txt")
+
+            var json = FileInputStream(file).bufferedReader().use { it.readText() }
+
+            val gson = Gson()
+
+            if (json != null)
+            {
+                val type = object : TypeToken<ArrayList<Player>>() { }.type
+                mPlayers = gson.fromJson<ArrayList<Player>>(json, type)
+                savePlayers()
+                return "Imported data from " + file.absolutePath.toString()
+            }
+
+            return "No data file called 'PlayersBKP.txt' is available in " + letDirectory.absolutePath.toString()
         }
 }

@@ -9,9 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 
 //import android.widget.Button
@@ -102,6 +100,11 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
         exportButton.setOnClickListener{
             Toast.makeText(applicationContext, data.exportToFile(this), Toast.LENGTH_LONG).show()
+        }
+
+        importButton.setOnClickListener{
+            Toast.makeText(applicationContext, data.importFromFile(this), Toast.LENGTH_LONG).show()
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
     }
 
