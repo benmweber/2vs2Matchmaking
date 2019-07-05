@@ -30,18 +30,6 @@ class MatchupManager(players:MutableList<Player>)
         }
     }
 
-  private fun applyMMRChanges()
-  {
-        for(dataPair in mMatchupHistory.last().mMMRUpdateResults)
-        {
-            val player = mPlayers.find { i -> i.mName == dataPair.first }
-            if(player != null)
-            {
-                player.mMMR += dataPair.second
-            }
-        }
-  }
-
     fun skipPendingMatchup()
     {
         // update result of match and log
@@ -55,12 +43,11 @@ class MatchupManager(players:MutableList<Player>)
     // Set the result of the match (true if team 1 won, false if team 2 won)
     fun confirmLastMatchupAsFinished(team1won : Boolean)
     {
-        // update result of match and log
+        // update result of match, update mmrs and log
         mPendingMatchup.setWinner(team1won)
         mMatchupHistory.add(mPendingMatchup)
 
         // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
-        applyMMRChanges()
         updateProbabilityScores()
     }
 

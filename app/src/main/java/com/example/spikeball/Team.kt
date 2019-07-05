@@ -25,7 +25,5 @@ class Team
         // calculate mmr
         mMMRDiff = abs(mPlayer1.mMMR - mPlayer2.mMMR)
         mCombinedMMR = (mPlayer1.mMMR + mPlayer2.mMMR) / 2
-        // adjust combined mmr depending on difference inside team
-        mCombinedMMR -=  (mMMRDiff * 0.15).toInt()
     }
 }

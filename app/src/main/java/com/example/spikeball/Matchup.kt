@@ -10,7 +10,6 @@ class Matchup {
     var mMMRGlobalAvg = 0
     var mWinner = Team()
     var mLoser = Team()
-    var mMMRUpdateResults = mutableListOf<Pair<String,Int>>()
     var mSkipped = false
 
     constructor()
@@ -42,7 +41,6 @@ class Matchup {
 
 
     // calculates the mmr change for a player depending of the result of the game and stores this information in the mMMRUpdateResults member variable for later application
-    // TODO: refactor because of call by ref
     private fun updateMMRforPlayer(player: Player, isWinner: Boolean)  {
 
         var mmrChange = 0
@@ -51,35 +49,40 @@ class Matchup {
         if (isWinner) {
             if (diff >= 0) // winner + higher mmr than avg = expected win -> small gain and the greater the diff, the smaller the gain
             {
-                // TODO: calculate from parameters
-                mmrChange = (30 - 0.3 * abs(diff)).toInt()
-                if(mmrChange < 5)
+                mmrChange = (25 - 0.2 * abs(diff)).toInt()
+                if(mmrChange < 10)
                 {
-                    mmrChange = 5
+                    mmrChange = 10
                 }
             }
-            else // winner + lower mmr than avg = expected win -> big gain and the greater the diff, the greater the gain
+            else // winner + lower mmr than avg = unexpected win -> big gain and the greater the diff, the greater the gain
             {
-                mmrChange = (30 + 0.5 * abs(diff)).toInt()
+                mmrChange = (25 + 0.2 * abs(diff)).toInt()
+                if(mmrChange > 50)
+                {
+                    mmrChange = 50
+                }
             }
         } else {
             if (diff >= 0) // loser + higher mmr than avg = unexpected loss -> big loss and the greater the diff, the bigger the loss
             {
-                // TODO: calculate from parameters
-                mmrChange = (-30 - 0.3 * abs(diff)).toInt()
+                mmrChange = (-25 - 0.2 * abs(diff)).toInt()
+                if(mmrChange < -50)
+                {
+                    mmrChange = -50
+                }
             }
             else // loser + lower mmr than avg = expected loss -> small loss and the greater the diff, the smaller the loss
             {
-                mmrChange = (-30 + 0.5 * abs(diff)).toInt()
-                if(mmrChange > 0)
+                mmrChange = (-25 + 0.2 * abs(diff)).toInt()
+                if(mmrChange > -10)
                 {
-                    mmrChange = 0
+                    mmrChange = -10
                 }
             }
         }
 
-        val mmrChangeData = Pair(player.mName,mmrChange)
-        mMMRUpdateResults.add(mmrChangeData)
+        player.mMMR += mmrChange
     }
 }
 
