@@ -15,10 +15,11 @@ class MatchupManager(players:MutableList<Player>)
 
     private fun updateProbabilityScores()
     {
+        // TODO: add probability of playing with each other player, depending on last matchup and team partner
         for(player in mPlayers)
         {
             player.resetMMPScore()
-            val result = mMatchupHistory.last().mPlayers.find{ i -> i.mName == player.mName }
+            val result = mMatchupHistory.last().getAllPlayers().find{ i -> i.mName == player.mName }
             if(result == null)
             {
                 player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore + 200
@@ -44,7 +45,10 @@ class MatchupManager(players:MutableList<Player>)
     fun confirmLastMatchupAsFinished(team1won : Boolean)
     {
         // update result of match, update mmrs and log
-        mPendingMatchup.setWinner(team1won)
+
+        //TODO: add dialogue for score data
+
+        mPendingMatchup.setScore(arrayOf(15,6,3,15,15,1)) //TODO: NUR BEISPIEL
         mMatchupHistory.add(mPendingMatchup)
 
         // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)

@@ -124,12 +124,13 @@ class FreeMode : AppCompatActivity() {
 
     fun displayMatchup(matchupToDisplay:Matchup){
 
-        player1box.text = matchupToDisplay.mPlayers[0].mName + " (" + matchupToDisplay.mPlayers[0].mMMR + ")"
-        player2box.text = matchupToDisplay.mPlayers[1].mName+ " (" + matchupToDisplay.mPlayers[1].mMMR + ")"
+        val players = matchupToDisplay.getAllPlayers()
 
-        player3box.text = matchupToDisplay.mPlayers[2].mName+ " (" + matchupToDisplay.mPlayers[2].mMMR + ")"
-        player4box.text = matchupToDisplay.mPlayers[3].mName+ " (" + matchupToDisplay.mPlayers[3].mMMR + ")"
+        player1box.text = players[0].mName + " (" + players[0].mMMR + ")"
+        player2box.text = players[1].mName+ " (" + players[1].mMMR + ")"
 
+        player3box.text = players[2].mName+ " (" + players[2].mMMR + ")"
+        player4box.text = players[3].mName+ " (" + players[3].mMMR + ")"
     }
 
 }

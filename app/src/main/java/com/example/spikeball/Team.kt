@@ -1,11 +1,9 @@
 package com.example.spikeball
 
-import kotlin.math.*
 
 class Team
 {
     var mCombinedMMR = 0
-    var mMMRDiff = 0
     var mPlayer1 = Player()
     var mPlayer2 = Player()
     var mPlayerCombinationID = String()
@@ -23,7 +21,6 @@ class Team
         mPlayerCombinationID = playerNamesArray[0] + " & " + playerNamesArray[1]
 
         // calculate mmr
-        mMMRDiff = abs(mPlayer1.mMMR - mPlayer2.mMMR)
         mCombinedMMR = (mPlayer1.mMMR + mPlayer2.mMMR) / 2
     }
 }

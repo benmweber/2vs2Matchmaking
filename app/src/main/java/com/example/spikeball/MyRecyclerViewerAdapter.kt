@@ -28,12 +28,13 @@ class MyRecyclerViewerAdapter(private val items : MutableList<Player>, private v
     }
 
 }
+
 class ViewHolder (view: View) : RecyclerView.ViewHolder(view){
     // Holds the TextView that will add each animal to
     val playerType = view.PlayerType
 
     fun bind(pl: Player, clickListener: (Player) -> Unit){
-        itemView.PlayerType.text = pl.mName + " (" + pl.mMMR + ")"
+        itemView.PlayerType.text = pl.mName + " (" +pl.mScoreWinsLosses[0] +"/" + pl.mScoreWinsLosses[1] + " - " + pl.mScorePoints[0]+"/"+pl.mScorePoints[1] +")"
         itemView.setOnClickListener {
             clickListener(pl)
             itemView.PlayerType.isChecked = !itemView.PlayerType.isChecked
