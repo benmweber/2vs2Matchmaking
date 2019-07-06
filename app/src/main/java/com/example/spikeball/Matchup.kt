@@ -46,21 +46,11 @@ class Matchup {
         }
     }
 
+    //TODO: use score/stats class that includes points, sets, W/L
     fun setScore(score : Array<Int>) {
 
         mScorePointsBoX = score
-
-        for(i in 0..2)
-        {
-            if(mScorePointsBoX[0+2*i] > mScorePointsBoX[1+2*i] && (mScorePointsBoX[0+2*i] + mScorePointsBoX[1+2*i]) != 0)
-            {
-                mScoreSets[0]++
-            }
-            else
-            {
-                mScoreSets[1]++
-            }
-        }
+        mScoreSets = getSetsFromScore(score)
 
         // update scores
         for(pl in getAllPlayers())
@@ -130,6 +120,27 @@ class Matchup {
 
         player.mMMR += mmrChange
     }
+
+    companion object Helpers
+    {
+        fun getSetsFromScore(score:Array<Int>) : Array<Int>
+        {
+            var sets = arrayOf(0,0)
+            for(i in 0 until score.size / 2)
+            {
+                if(score[0+2*i] > score[1+2*i] && (score[0+2*i] + score[1+2*i]) != 0)
+                {
+                    sets[0]++
+                }
+                else
+                {
+                    sets[1]++
+                }
+            }
+            return sets
+        }
+    }
+
 }
 
 

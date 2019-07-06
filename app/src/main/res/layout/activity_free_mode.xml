@@ -10,6 +10,65 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <EditText
+                android:id="@+id/set1team2"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set1"
+                android:inputType="textPersonName"
+                app:layout_constraintTop_toTopOf="@+id/set1team1"
+                app:layout_constraintStart_toEndOf="@+id/set1team1" android:layout_marginStart="64dp"/>
+        <EditText
+                android:id="@+id/set3team2"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set3"
+                android:inputType="textPersonName"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/set2team2"
+                app:layout_constraintStart_toStartOf="@+id/set2team2"/>
+        <EditText
+                android:id="@+id/set2team1"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set2"
+                android:inputType="textPersonName"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/set1team1"
+                app:layout_constraintStart_toStartOf="@+id/set1team1"/>
+        <EditText
+                android:id="@+id/set3team1"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set3"
+                android:inputType="textPersonName"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/set2team1"
+                app:layout_constraintStart_toStartOf="@+id/set2team1"/>
+        <EditText
+                android:id="@+id/set2team2"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set2"
+                android:inputType="textPersonName"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/set1team2"
+                app:layout_constraintStart_toStartOf="@+id/set1team2"/>
+        <EditText
+                android:id="@+id/set1team1"
+                android:layout_width="79dp"
+                android:layout_height="49dp"
+                android:ems="10"
+                android:hint="@string/set1"
+                android:inputType="textPersonName"
+                android:layout_marginTop="56dp"
+                app:layout_constraintTop_toBottomOf="@+id/player2box" android:layout_marginStart="52dp"
+                app:layout_constraintStart_toStartOf="@+id/player2box"/>
         <TextView
                 android:text="@string/vs"
                 android:layout_width="25dp"
@@ -72,5 +131,13 @@
                 android:id="@+id/player4box" android:textSize="18sp"
                 android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/player3box"
                 app:layout_constraintEnd_toEndOf="@+id/player3box"/>
+        <Switch
+                android:text="BO3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bo3switch"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/finishedButton"
+                app:layout_constraintEnd_toStartOf="@+id/finishedButton" android:layout_marginEnd="8dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

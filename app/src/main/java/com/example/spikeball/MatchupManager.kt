@@ -42,13 +42,10 @@ class MatchupManager(players:MutableList<Player>)
     }
 
     // Set the result of the match (true if team 1 won, false if team 2 won)
-    fun confirmLastMatchupAsFinished(team1won : Boolean)
+    fun confirmLastMatchupAsFinished(score:Array<Int>)
     {
         // update result of match, update mmrs and log
-
-        //TODO: add dialogue for score data
-
-        mPendingMatchup.setScore(arrayOf(15,6,3,15,15,1)) //TODO: NUR BEISPIEL
+        mPendingMatchup.setScore(score)
         mMatchupHistory.add(mPendingMatchup)
 
         // update mmr and new probabiliti scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
