@@ -128,13 +128,12 @@ class Matchup {
             var sets = arrayOf(0,0)
             for(i in 0 until score.size / 2)
             {
-                if(score[0+2*i] > score[1+2*i] && (score[0+2*i] + score[1+2*i]) != 0)
-                {
-                    sets[0]++
-                }
-                else
-                {
-                    sets[1]++
+                if((score[0+2*i] + score[1+2*i]) != 0) {
+                    if (score[0 + 2 * i] > score[1 + 2 * i]) {
+                        sets[0]++
+                    } else {
+                        sets[1]++
+                    }
                 }
             }
             return sets
