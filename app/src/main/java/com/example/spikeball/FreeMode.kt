@@ -77,7 +77,7 @@ class FreeMode : AppCompatActivity() {
         var inputScore = arrayOf(0,0,0,0,0,0)
         var emptyBoxes = arrayOf(false,false,false,false,false,false)
 
-        // TODO: prettier?
+        // TODO: prettier? also, use only 2 boxes
         // read out all boxes and save the state of the box (empty or not)
         if(set1team1.text.toString() != "")
         {
@@ -174,6 +174,14 @@ class FreeMode : AppCompatActivity() {
         matchupMgr!!.confirmLastMatchupAsFinished(inputScore)
         data.savePlayers()
         getNewMatchup()
+
+        // init score boxes type
+        set1team1.text.clear()
+        set1team2.text.clear()
+        set2team1.text.clear()
+        set2team2.text.clear()
+        set3team1.text.clear()
+        set3team2.text.clear()
     }
 
     // manually set the player constellation for next matchup
