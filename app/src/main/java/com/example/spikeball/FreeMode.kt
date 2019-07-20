@@ -3,12 +3,9 @@ package com.example.spikeball
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_free_mode.*
 import android.text.InputType
-import android.widget.EditText
-import androidx.constraintlayout.solver.widgets.Helper
 
 
 class FreeMode : AppCompatActivity() {
@@ -195,7 +192,8 @@ class FreeMode : AppCompatActivity() {
 
     fun skipNextMatchup()
     {
-        matchupMgr!!.skipPendingMatchup()
+        matchupMgr!!.resetAllPlayerMMPScores()
+        matchupMgr!!.cachePendingMatchup()
         getNewMatchup()
     }
 

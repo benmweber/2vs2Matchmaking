@@ -10,7 +10,7 @@ class Player
     var mScoreWinsLosses = arrayOf(0,0)
 
     // flags & stuff
-    var mMatchMakingProbabilityScore = 0
+    var mMatchMakingProbabilityScore = 0.0
     var mIsChecked = false //TODO: remove and improve
 
     constructor()
@@ -26,7 +26,7 @@ class Player
 
     fun resetMMPScore()
     {
-        mMatchMakingProbabilityScore = 100
+        mMatchMakingProbabilityScore = 10000.0
     }
 
     fun updateScoreData(playedMatchup:Matchup) : Boolean

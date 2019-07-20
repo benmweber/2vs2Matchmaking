@@ -7,38 +7,86 @@ class MatchupManager(players:MutableList<Player>)
     private var mPlayers = players
     private var mMatchupHistory = mutableListOf<Matchup>()
     var mPendingMatchup = Matchup()
+    var mCachedMatchup = Matchup()
+    var mCached = false
+
+    // parameters
+    private val mDepth = 2
+    private val mChangeFactor = 0.1
 
     fun addPlayer(player:Player)
     {
         mPlayers.add(player)
     }
 
+    // Rules:
+    // 1. Players that didnt play last round ALWAYS play next round (except there is no matchup left)
+    // 2. Players that played two times in a row shouldnt play a third time
+    // 3. Players shouldn't play with the same team two times in a row
+
     private fun updateProbabilityScores()
     {
-        // TODO: add probability of playing with each other player, depending on last matchup and team partner
         for(player in mPlayers)
         {
             player.resetMMPScore()
-            val result = mMatchupHistory.last().getAllPlayers().find{ i -> i.mName == player.mName }
-            if(result == null)
+
+            // check if player played the last X (= mDepth) matches
+
+            var playedLastMatchups = arrayOfNulls<Boolean>(mDepth)
+
+            for (i in 0 until mDepth)
             {
-                player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore + 200
+                playedLastMatchups[i] = false
             }
+
+            //if matchuphistory is of the same size as depth, lookup the players of the last matches and store in the array (most recent game first in array)
+            if(mMatchupHistory.size >= mDepth)
+            {
+                for (i in 0 until mDepth)
+                {
+                    val tempResult = mMatchupHistory[mMatchupHistory.lastIndex - i].getAllPlayers().find{ i -> i.mName == player.mName }
+
+                    playedLastMatchups[i] = tempResult != null
+                }
+            }
+            // if depth is bigger than history size, only check the available matches, then fill the rest of the array with false
             else
             {
-                player.mMatchMakingProbabilityScore = player.mMatchMakingProbabilityScore - 70
+                for (i in 0 until mMatchupHistory.size)
+                {
+                    val tempResult = mMatchupHistory[mMatchupHistory.lastIndex - i].getAllPlayers().find{ i -> i.mName == player.mName }
+
+                    playedLastMatchups[i] = tempResult != null
+                }
             }
+
+            // update probability
+            for(played in playedLastMatchups)
+            {
+                if(played!!)
+                {
+                    player.mMatchMakingProbabilityScore =  player.mMatchMakingProbabilityScore * mChangeFactor
+                    if (player.mMatchMakingProbabilityScore < 10.0)
+                    {
+                        player.mMatchMakingProbabilityScore = 10.0
+                    }
+                }
+                else
+                {
+                    break
+                }
+
+            }
+
         }
     }
 
-    fun skipPendingMatchup()
+    fun resetAllPlayerMMPScores()
     {
-        // update result of match and log
-        mPendingMatchup.mSkipped = true
-        mMatchupHistory.add(mPendingMatchup)
-
-        // update mmr and new probabilities scores based on last match (ATTENTION, mPendingMatchup has to be added to mMatchupHistory beforehand!)
-        updateProbabilityScores()
+        for(player in mPlayers)
+        {
+            player.resetMMPScore()
+        }
     }
 
     // Set the result of the match (true if team 1 won, false if team 2 won)
@@ -52,10 +100,18 @@ class MatchupManager(players:MutableList<Player>)
         updateProbabilityScores()
     }
 
+    fun cachePendingMatchup()
+    {
+        mCachedMatchup = mPendingMatchup
+        mCached = true
+    }
+
     fun resetMatchupHistory()
     {
         // reset scores, add pending matchup temporarily to history, then clear, so that there is not the same matchup after reset
         mMatchupHistory.add(mPendingMatchup)
+        // cache matchup for improved matchup generation
+        cachePendingMatchup()
         updateProbabilityScores()
         mMatchupHistory.clear()
     }
@@ -66,14 +122,18 @@ class MatchupManager(players:MutableList<Player>)
     // AC vs BD
     // AD vs BC
     // -> 3 matchups
+
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
         var resultingMatchup = Matchup()
 
         var finished = false
         var counter = 0
+        var teamRetries = 0
+        val counterThreshold = 1000*mPlayers.size
 
-        while(!finished && counter < 1000*mPlayers.size)
+
+        while(!finished && counter < counterThreshold)
         {
             val tempPlayers = mutableListOf<Player>()
             for(i in 0..3)
@@ -88,17 +148,61 @@ class MatchupManager(players:MutableList<Player>)
 
             for(mtchp in mMatchupHistory)
             {
-                // if matchup already exists in history AND the according matchup is NOT a skipped one, keep rerolling
-                if(resultingMatchup.mMatchupID == mtchp.mMatchupID && !mtchp.mSkipped) {
+                // if matchup already exists in history keep rerolling
+                if(resultingMatchup.mMatchupID == mtchp.mMatchupID) {
                     finished = false
                 }
             }
+
+            // if any of the teams played in this exact constellation in last X ( =mDepth) matchups, retry ( after X tries, ignore this)
+            if(finished && teamRetries < 50 && mMatchupHistory.size > 0)
+            {
+                var tempDepth = mDepth
+
+                if(mMatchupHistory.size < mDepth)
+                {
+                    tempDepth = mMatchupHistory.size
+                }
+
+                for(i in 0..1)
+                {
+                    for (j in 0..1)
+                    {
+                        for (k in 0 until tempDepth)
+                        {
+                            if(resultingMatchup.mTeamConstellation[i].mPlayerCombinationID == mMatchupHistory[mMatchupHistory.lastIndex - k].mTeamConstellation[j].mPlayerCombinationID)
+                            {
+                                finished = false
+                                teamRetries++
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if skipped or reset matchup history, check for team constellations in cached matchup
+            if(finished && mCached)
+            {
+                for(i in 0..1)
+                {
+                    for (j in 0..1)
+                    {
+                            if(resultingMatchup.mTeamConstellation[i].mPlayerCombinationID == mCachedMatchup.mTeamConstellation[j].mPlayerCombinationID)
+                            {
+                                finished = false
+                            }
+                    }
+                }
+            }
+
             counter++
         }
 
+        mCached = false
         mPendingMatchup = resultingMatchup
         return Pair(finished,resultingMatchup)
     }
+
 
 
 
@@ -107,13 +211,13 @@ class MatchupManager(players:MutableList<Player>)
         var finished = false
         var resultingPlayer = Player("ERROR",0)
         while (!finished) {
-            var sum = 0
+            var sum = 0.0
             for (player in mPlayers) {
                 sum += player.mMatchMakingProbabilityScore
             }
-            val resultRNG = Random.nextInt(sum)
+            val resultRNG = Random.nextInt(sum.toInt()+1)
 
-            var temp = 0
+            var temp = 0.0
 
             for (player in mPlayers) {
                 temp += player.mMatchMakingProbabilityScore

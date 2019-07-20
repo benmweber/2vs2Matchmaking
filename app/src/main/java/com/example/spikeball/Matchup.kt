@@ -12,9 +12,6 @@ class Matchup {
     var mScorePointsBoX = arrayOf(0,0,0,0,0,0)
     var mScoreSets = arrayOf(0,0)
 
-    // flags
-    var mSkipped = false //TODO: maybe remove? not very "pretty"
-
     constructor()
 
     constructor(team1: Team, team2: Team) : this() {
