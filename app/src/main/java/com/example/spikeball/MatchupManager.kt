@@ -215,7 +215,7 @@ class MatchupManager(players:MutableList<Player>)
             for (player in mPlayers) {
                 sum += player.mMatchMakingProbabilityScore
             }
-            val resultRNG = Random.nextInt(sum.toInt()+1)
+            val resultRNG = Random.nextInt(sum.toInt())
 
             var temp = 0.0
 
