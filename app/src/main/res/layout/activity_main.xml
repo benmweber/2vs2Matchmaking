@@ -106,15 +106,21 @@
             app:layout_constraintTop_toTopOf="parent" android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"/>
     <Button
-            android:text="IMPORT DATA"
+            android:text="RELOAD DATA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/importButton" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="80dp" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/exportButton" android:layout_marginStart="8dp"
-            app:layout_constraintHorizontal_bias="1.0"/>
+            android:id="@+id/reloadButton"
+            app:layout_constraintEnd_toEndOf="@+id/exportButton"
+            app:layout_constraintBottom_toTopOf="@+id/exportButton"/>
     <Button
-            android:text="Export Data"
+            android:text="TELEGRAM IMPORT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/telegramImportButton"
+            app:layout_constraintEnd_toEndOf="@+id/reloadButton"
+            app:layout_constraintBottom_toTopOf="@+id/reloadButton"/>
+    <Button
+            android:text="Backup Data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/exportButton" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"

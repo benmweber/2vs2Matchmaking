@@ -11,11 +11,19 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
 
 //import android.widget.Button
 //import com.google.android.material.snackbar.Snackbar
 
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.Toast
+
+
 
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
@@ -24,9 +32,15 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     private val data = DataManager(this)
 
+    private var permissionGranted = false
+
+    private val REQUEST_PERMISSION_EXTERNAL_WRITE = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        checkFileIOPermission()
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
@@ -102,9 +116,21 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             Toast.makeText(applicationContext, data.exportToFile(this), Toast.LENGTH_LONG).show()
         }
 
-        importButton.setOnClickListener{
+        reloadButton.setOnClickListener{
             Toast.makeText(applicationContext, data.importFromFile(this), Toast.LENGTH_LONG).show()
             recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+        }
+
+        telegramImportButton.setOnClickListener{
+            if(permissionGranted)
+            {
+                Toast.makeText(applicationContext, data.importFromDownloads(), Toast.LENGTH_LONG).show()
+                recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            }
+            else
+            {
+                checkFileIOPermission()
+            }
         }
     }
 
@@ -200,6 +226,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     }
 
+    //TODO: remove or renew
     fun showStats(){
 
         var selectedPlayers = mutableListOf<Player>()
@@ -244,6 +271,39 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             val dialog: AlertDialog = builder.create()
             dialog.show()
 
+        }
+    }
+
+    fun checkFileIOPermission()
+    {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),REQUEST_PERMISSION_EXTERNAL_WRITE)
+
+            // REQUEST_PERMISSION_EXTERNAL_WRITE is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+        else
+        {
+            permissionGranted = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_PERMISSION_EXTERNAL_WRITE ->  permissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
     }
 

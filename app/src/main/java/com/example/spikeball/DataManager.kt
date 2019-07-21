@@ -14,6 +14,9 @@ class DataManager {
         private val SP_PLAYER_NAME = "players"
         private val SP_MATCHUP_NAME = "matchups"
 
+        private val BACKUP_FILE_NAME = "PlayersBKP"
+        private val DOWNLOADS_DIR = "/storage/emulated/0/Download"
+
         var mPlayers = arrayListOf<Player>()
         var mMatchupHistory = arrayListOf<Matchup>()
 
@@ -115,7 +118,7 @@ class DataManager {
             val path = context.getExternalFilesDir(null)
             val letDirectory = File(path, "EXPORT")
             letDirectory.mkdirs()
-            val file = File(letDirectory, "PlayersBKP.txt")
+            val file = File(letDirectory, BACKUP_FILE_NAME + ".txt")
             FileOutputStream(file).use {
                 it.write(savePlayers().toByteArray())
             }
@@ -127,7 +130,7 @@ class DataManager {
             // read file
             val path = context.getExternalFilesDir(null)
             val letDirectory = File(path, "EXPORT")
-            val file = File(letDirectory, "PlayersBKP.txt")
+            val file = File(letDirectory, BACKUP_FILE_NAME + ".txt")
 
             var json = FileInputStream(file).bufferedReader().use { it.readText() }
 
@@ -141,6 +144,50 @@ class DataManager {
                 return "Imported data from " + file.absolutePath.toString()
             }
 
-            return "No data file called 'PlayersBKP.txt' is available in " + letDirectory.absolutePath.toString()
+            return "No data file called '" + BACKUP_FILE_NAME + ".txt' is available in " + letDirectory.absolutePath.toString()
         }
+
+        fun importFromDownloads() : String
+        {
+            var filenames = arrayListOf<String>()
+
+            File(DOWNLOADS_DIR).walk().filter { p -> p.name.endsWith(".txt") && p.name.contains("PlayersBKP")}.forEach { filenames.add( it.name) }
+            filenames.sort()
+
+            var fileName : String
+
+            if( filenames[filenames.lastIndex] == BACKUP_FILE_NAME + ".txt")
+            {
+                if(filenames.size > 1)
+                {
+                    fileName = filenames[filenames.lastIndex-1]
+                }
+                else
+                {
+                    fileName = filenames[0]
+                }
+            }
+            else
+            {
+                fileName = filenames.last()
+            }
+            
+            val file = File(DOWNLOADS_DIR,fileName)
+
+            var json = FileInputStream(file).bufferedReader().use { it.readText() }
+
+            val gson = Gson()
+
+            if (json != null)
+            {
+                val type = object : TypeToken<ArrayList<Player>>() { }.type
+                mPlayers = gson.fromJson<ArrayList<Player>>(json, type)
+                savePlayers()
+                return "Imported data from " + file.absolutePath.toString()
+            }
+
+            return "No data file called '" + BACKUP_FILE_NAME + ".txt' was found in " + DOWNLOADS_DIR
+        }
+
+
 }
