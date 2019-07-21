@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.Manifest
+import android.content.ClipboardManager
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -112,16 +113,42 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             deletePlayers()
         }
 
-        exportButton.setOnClickListener{
+     /*   exportButton.setOnClickListener{
             Toast.makeText(applicationContext, data.exportToFile(this), Toast.LENGTH_LONG).show()
         }
 
         reloadButton.setOnClickListener{
             Toast.makeText(applicationContext, data.importFromFile(this), Toast.LENGTH_LONG).show()
             recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+        }*/
+
+        shareButton.setOnClickListener{
+            val dataStr = data.savePlayers()
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT,dataStr )
+                type = "text/plain"
+            }
+            startActivity(sendIntent)
         }
 
-        telegramImportButton.setOnClickListener{
+        clipboardLoadButton.setOnClickListener{
+            val clipMgr = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+            val clipData = clipMgr.primaryClip.getItemAt(0).text.toString()
+
+            if(clipData != "" && clipData != null && clipData.contains("{"))
+            {
+                Toast.makeText(applicationContext,data.importFromDataString(clipData), Toast.LENGTH_LONG).show()
+                recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            }
+            else
+            {
+                Toast.makeText(applicationContext,"NO CORRECT DATA IN CLIPBOARD! Copy data first ...", Toast.LENGTH_LONG).show()
+            }
+        }
+
+       /* telegramImportButton.setOnClickListener{
             if(permissionGranted)
             {
                 Toast.makeText(applicationContext, data.importFromDownloads(), Toast.LENGTH_LONG).show()
@@ -131,7 +158,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             {
                 checkFileIOPermission()
             }
-        }
+        }*/
     }
 
     fun addPlayer(){
