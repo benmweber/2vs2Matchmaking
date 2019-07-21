@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import java.io.*
 
 
+
 class DataManager {
 
         private var mContext : Context? = null
@@ -67,6 +68,7 @@ class DataManager {
             savePlayers()
         }
 
+        //TODO: add date in data for quality of life
         fun savePlayers() : String
         {
             val shPref = mContext!!.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE)
@@ -147,6 +149,21 @@ class DataManager {
             return "No data file called '" + BACKUP_FILE_NAME + ".txt' is available in " + letDirectory.absolutePath.toString()
         }
 
+        fun importFromDataString(jsonStr : String) : String
+        {
+            val gson = Gson()
+
+            if (jsonStr != null)
+            {
+                val type = object : TypeToken<ArrayList<Player>>() { }.type
+                mPlayers = gson.fromJson<ArrayList<Player>>(jsonStr, type)
+                savePlayers()
+                return "Data imported!"
+            }
+
+            return "Data ERROR"
+        }
+
         fun importFromDownloads() : String
         {
             var filenames = arrayListOf<String>()
@@ -171,7 +188,7 @@ class DataManager {
             {
                 fileName = filenames.last()
             }
-            
+
             val file = File(DOWNLOADS_DIR,fileName)
 
             var json = FileInputStream(file).bufferedReader().use { it.readText() }

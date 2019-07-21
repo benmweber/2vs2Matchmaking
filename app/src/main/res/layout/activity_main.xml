@@ -66,10 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/löschen"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/recyclerViewerForPlayerList"
-    />
+            tools:layout_editor_absoluteX="17dp" android:layout_marginTop="60dp"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewerForPlayerList"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewerForPlayerList"
@@ -86,17 +84,15 @@
             android:text="@string/Do"
             android:layout_width="87dp"
             android:layout_height="44dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@+id/deletePlayersButton"
-            app:layout_constraintStart_toStartOf="@+id/deletePlayersButton"/>
+            tools:layout_editor_absoluteX="17dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/deletePlayersButton"/>
 
     <Spinner
             android:id="@+id/gameTypeSpinner"
             android:layout_width="wrap_content"
             android:layout_height="39dp"
-            app:layout_constraintStart_toEndOf="@+id/doButton"
-            android:layout_marginStart="8dp" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/deletePlayersButton"/>
+            app:layout_constraintTop_toBottomOf="@+id/doButton" app:layout_constraintStart_toStartOf="@+id/doButton"
+    />
     <TextView
             android:text="Setup Players and Mode"
             android:layout_width="375dp"
@@ -106,25 +102,19 @@
             app:layout_constraintTop_toTopOf="parent" android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"/>
     <Button
-            android:text="RELOAD DATA"
+            android:text="LOAD FROM CLIPBOARD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/reloadButton"
-            app:layout_constraintEnd_toEndOf="@+id/exportButton"
-            app:layout_constraintBottom_toTopOf="@+id/exportButton"/>
+            android:id="@+id/clipboardLoadButton"
+            app:layout_constraintTop_toTopOf="@+id/deletePlayersButton"
+            app:layout_constraintStart_toEndOf="@+id/deletePlayersButton" android:layout_marginStart="48dp"/>
     <Button
-            android:text="TELEGRAM IMPORT"
+            android:text="SHARE DATA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/telegramImportButton"
-            app:layout_constraintEnd_toEndOf="@+id/reloadButton"
-            app:layout_constraintBottom_toTopOf="@+id/reloadButton"/>
-    <Button
-            android:text="Backup Data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/exportButton" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="28dp" app:layout_constraintBottom_toBottomOf="parent"/>
+            android:id="@+id/shareButton"
+            app:layout_constraintEnd_toEndOf="@+id/clipboardLoadButton"
+            app:layout_constraintTop_toBottomOf="@+id/clipboardLoadButton"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
