@@ -106,6 +106,8 @@ class DataManager {
             mMatchupHistory = gson.fromJson<ArrayList<Matchup>>(json, type)
         }
 
+        // TODO: add some kind of team history
+
 
         fun exportToFile(context:Context) : String
         {

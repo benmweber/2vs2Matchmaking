@@ -4,83 +4,139 @@ import kotlin.math.*
 
 class Matchup {
 
+    // pre match data
     var mTeamConstellation = emptyList<Team>()
-    var mPlayers = emptyList<Player>()
     var mMatchupID = String()
-    var mMMRGlobalAvg = 0
-    var mWinner = Team()
-    var mLoser = Team()
-    var mMMRUpdateResults = mutableListOf<Pair<String,Int>>()
-    var mSkipped = false
+
+    // post match data
+    var mScorePointsBoX = arrayOf(0,0,0,0,0,0)
+    var mScoreSets = arrayOf(0,0)
 
     constructor()
 
     constructor(team1: Team, team2: Team) : this() {
-        mPlayers = listOf(team1.mPlayer1, team1.mPlayer2, team2.mPlayer1, team2.mPlayer2)
         mTeamConstellation = listOf(team1, team2)
         mTeamConstellation = mTeamConstellation.sortedWith(compareBy({ it.mPlayerCombinationID }))
         mMatchupID = mTeamConstellation[0].mPlayerCombinationID + "!" + mTeamConstellation[1].mPlayerCombinationID
-        mMMRGlobalAvg = (mTeamConstellation[0].mCombinedMMR + mTeamConstellation[1].mCombinedMMR) / 2
     }
 
-    fun setWinner(team1won: Boolean) {
-        if (mTeamConstellation.isNotEmpty()) {
-            if (team1won) {
-                mWinner = mTeamConstellation[0]
-                mLoser = mTeamConstellation[1]
-            } else {
-                mWinner = mTeamConstellation[1]
-                mLoser = mTeamConstellation[0]
-            }
+    fun getAllPlayers() : ArrayList<Player>
+    {
+       return arrayListOf<Player>(mTeamConstellation[0].mPlayer1,mTeamConstellation[0].mPlayer2,mTeamConstellation[1].mPlayer1,mTeamConstellation[1].mPlayer2)
+    }
 
-            updateMMRforPlayer(mWinner.mPlayer1,true)
-            updateMMRforPlayer(mWinner.mPlayer2,true)
-            updateMMRforPlayer(mLoser.mPlayer1,false)
-            updateMMRforPlayer(mLoser.mPlayer2,false)
+    fun getWinnerTeam() : Team
+    {
+        // check if score is set
+        if(mScoreSets[0] == 0 && mScoreSets[1] == 0)
+        {
+            return Team()
+        }
+
+        if(mScoreSets[0] > mScoreSets[1])
+        {
+            return mTeamConstellation[0]
+        }
+        else
+        {
+            return mTeamConstellation[1]
         }
     }
 
+    //TODO: use score/stats class that includes points, sets, W/L
+    fun setScore(score : Array<Int>) {
 
-    // calculates the mmr change for a player depending of the result of the game and stores this information in the mMMRUpdateResults member variable for later application
-    // TODO: refactor because of call by ref
-    private fun updateMMRforPlayer(player: Player, isWinner: Boolean)  {
+        mScorePointsBoX = score
+        mScoreSets = getSetsFromScore(score)
 
+        // update scores
+        for(pl in getAllPlayers())
+        {
+            pl.updateScoreData(this)
+        }
+
+        // update MMRs
+        updateMMRforPlayer(mTeamConstellation[0].mPlayer1,true,mScoreSets[0] > mScoreSets[1])
+        updateMMRforPlayer(mTeamConstellation[0].mPlayer2,true,mScoreSets[0] > mScoreSets[1])
+        updateMMRforPlayer(mTeamConstellation[1].mPlayer1,false,mScoreSets[0] < mScoreSets[1])
+        updateMMRforPlayer(mTeamConstellation[1].mPlayer2,false,mScoreSets[0] < mScoreSets[1])
+    }
+
+    // calculates the mmr change for a player depending of the result of the game
+    private fun updateMMRforPlayer(player: Player, playersIsTeam1: Boolean, playerIsWinner: Boolean)  {
+
+        //TODO: add additional layer that scales mmr change according to difference inside of team
         var mmrChange = 0
-        val diff = player.mMMR - mMMRGlobalAvg
+        var diff = mTeamConstellation[0].mCombinedMMR - mTeamConstellation[1].mCombinedMMR
 
-        if (isWinner) {
+        // if team 1 and won -> team 1 won
+        // if diff is positive -> expected win
+        // if diff is negative -> unexpected win
+
+        // switch polarity if player not in team 1
+        if(!playersIsTeam1)
+        {
+            diff *=-1
+        }
+
+        if (playerIsWinner) {
             if (diff >= 0) // winner + higher mmr than avg = expected win -> small gain and the greater the diff, the smaller the gain
             {
-                // TODO: calculate from parameters
-                mmrChange = (30 - 0.3 * abs(diff)).toInt()
-                if(mmrChange < 5)
+                mmrChange = (25 - 0.2 * abs(diff)).toInt()
+                if(mmrChange < 10)
                 {
-                    mmrChange = 5
+                    mmrChange = 10
                 }
             }
-            else // winner + lower mmr than avg = expected win -> big gain and the greater the diff, the greater the gain
+            else // winner + lower mmr than avg = unexpected win -> big gain and the greater the diff, the greater the gain
             {
-                mmrChange = (30 + 0.5 * abs(diff)).toInt()
+                mmrChange = (25 + 0.2 * abs(diff)).toInt()
+                if(mmrChange > 50)
+                {
+                    mmrChange = 50
+                }
             }
         } else {
             if (diff >= 0) // loser + higher mmr than avg = unexpected loss -> big loss and the greater the diff, the bigger the loss
             {
-                // TODO: calculate from parameters
-                mmrChange = (-30 - 0.3 * abs(diff)).toInt()
+                mmrChange = (-25 - 0.2 * abs(diff)).toInt()
+                if(mmrChange < -50)
+                {
+                    mmrChange = -50
+                }
             }
             else // loser + lower mmr than avg = expected loss -> small loss and the greater the diff, the smaller the loss
             {
-                mmrChange = (-30 + 0.5 * abs(diff)).toInt()
-                if(mmrChange > 0)
+                mmrChange = (-25 + 0.2 * abs(diff)).toInt()
+                if(mmrChange > -10)
                 {
-                    mmrChange = 0
+                    mmrChange = -10
                 }
             }
         }
 
-        val mmrChangeData = Pair(player.mName,mmrChange)
-        mMMRUpdateResults.add(mmrChangeData)
+        player.mMMR += mmrChange
     }
+
+    companion object Helpers
+    {
+        fun getSetsFromScore(score:Array<Int>) : Array<Int>
+        {
+            var sets = arrayOf(0,0)
+            for(i in 0 until score.size / 2)
+            {
+                if((score[0+2*i] + score[1+2*i]) != 0) {
+                    if (score[0 + 2 * i] > score[1 + 2 * i]) {
+                        sets[0]++
+                    } else {
+                        sets[1]++
+                    }
+                }
+            }
+            return sets
+        }
+    }
+
 }
 
 

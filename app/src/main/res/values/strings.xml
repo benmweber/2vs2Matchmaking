@@ -32,5 +32,8 @@
     <string name="title_activity_free_mode">FreeMode</string>
     <string name="finished">FINISHED</string>
     <string name="manualMatchup">Setup next matchup</string>
+    <string name="set1">set 1</string>
+    <string name="set3">set 3</string>
+    <string name="set2">set 2</string>
 
 </resources>
