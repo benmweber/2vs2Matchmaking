@@ -7,48 +7,48 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.graphics.Color
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.provider.AlarmClock.EXTRA_MESSAGE
+import android.content.pm.ActivityInfo
+import android.Manifest
+import android.content.ClipboardManager
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
 
 //import android.widget.Button
 //import com.google.android.material.snackbar.Snackbar
 
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.Toast
+
+
 
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
-    var mListOfGameTypes = arrayOf("Endlosspiel", "Turnier", "ShowStats")
-    var mWhichGameType = 0
-    var mPlayerList = mutableListOf<Player>()
+    private var mListOfGameTypes = arrayOf("FreeMode", "Turnier", "ShowStats")
+    private var mWhichGameType = 0
 
+    private val data = DataManager(this)
 
+    private var permissionGranted = false
 
-
-    //preferences in which Players are saved
-    val mNameOfSharedPrefForPlayerList = "sharedPrefForPlayerList"
-    var mSharedPrefsForPlayerList: SharedPreferences? = null
-    var mEditorOfSharedPrefsForPlayerList: SharedPreferences.Editor? = null
+    private val REQUEST_PERMISSION_EXTERNAL_WRITE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        checkFileIOPermission()
 
-        //Init of preferences in which Players are saved
-        mSharedPrefsForPlayerList = this.getSharedPreferences(mNameOfSharedPrefForPlayerList, Context.MODE_PRIVATE)
-        mEditorOfSharedPrefsForPlayerList = mSharedPrefsForPlayerList!!.edit()
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
+        data.loadPlayers()
 
-        mPlayerList.clear()
-        loadPlayersFromPrefs()
         recyclerViewerForPlayerList.layoutManager = LinearLayoutManager(this)
-        recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
-
+        recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
 
         //dropdownMenu
         gameTypeSpinner.onItemSelectedListener = this
@@ -59,9 +59,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         // Set Adapter to Spinner
         gameTypeSpinner.adapter = aa
 
-
         initButtons()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -114,27 +112,53 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             // Do something in response to button
             deletePlayers()
         }
-    }
 
-    fun loadPlayersFromPrefs(){
+     /*   exportButton.setOnClickListener{
+            Toast.makeText(applicationContext, data.exportToFile(this), Toast.LENGTH_LONG).show()
+        }
 
-        var i = 0
-        var isNotEmpty = true
+        reloadButton.setOnClickListener{
+            Toast.makeText(applicationContext, data.importFromFile(this), Toast.LENGTH_LONG).show()
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+        }*/
 
-        while(isNotEmpty){
-
-            if(mSharedPrefsForPlayerList!!.contains("Player" + i.toString())){
-
-                var nameOfPlayerEntryInPref =  mSharedPrefsForPlayerList!!.getString("Player" + i.toString(), "blank")
-                var mmrOfPlayerEntryInPref = mSharedPrefsForPlayerList!!.getInt(nameOfPlayerEntryInPref+"MMR", 0)
-                var newPl = Player(nameOfPlayerEntryInPref, mmrOfPlayerEntryInPref)
-                mPlayerList.add(newPl)
-                i++
+        shareButton.setOnClickListener{
+            val dataStr = data.savePlayers()
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT,dataStr )
+                type = "text/plain"
             }
-            else{
-                isNotEmpty = false
+            startActivity(sendIntent)
+        }
+
+        clipboardLoadButton.setOnClickListener{
+            val clipMgr = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+            val clipData = clipMgr.primaryClip.getItemAt(0).text.toString()
+
+            if(clipData != "" && clipData != null && clipData.contains("{"))
+            {
+                Toast.makeText(applicationContext,data.importFromDataString(clipData), Toast.LENGTH_LONG).show()
+                recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            }
+            else
+            {
+                Toast.makeText(applicationContext,"NO CORRECT DATA IN CLIPBOARD! Copy data first ...", Toast.LENGTH_LONG).show()
             }
         }
+
+       /* telegramImportButton.setOnClickListener{
+            if(permissionGranted)
+            {
+                Toast.makeText(applicationContext, data.importFromDownloads(), Toast.LENGTH_LONG).show()
+                recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            }
+            else
+            {
+                checkFileIOPermission()
+            }
+        }*/
     }
 
     fun addPlayer(){
@@ -142,21 +166,16 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         if(playerName.text.isNotEmpty()){
 
             var name = playerName.text.toString()
-            Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
+            //Toast.makeText(applicationContext,name,Toast.LENGTH_SHORT).show()
             playerName.text.clear()
-            val pl = Player(name,500)
 
-            mPlayerList.add(pl)
-            mEditorOfSharedPrefsForPlayerList!!.putString("Player" + mPlayerList.indexOf(pl).toString(), pl.mName)
-            mEditorOfSharedPrefsForPlayerList!!.putInt(name+"MMR", pl.mMMR)
-            mEditorOfSharedPrefsForPlayerList!!.apply()
-            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            data.addPlayer(Player(name,500))
+
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
-
     }
 
     fun deletePlayers(){
-
 
         //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
         // Initialize a new instance of
@@ -173,66 +192,37 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             // Do something when user press the positive button
             Toast.makeText(applicationContext,"yeeeesch Fuck THEM. We dont need them",Toast.LENGTH_SHORT).show()
 
-            var originalListSize = mPlayerList.size
+            data.deleteAllCheckedPlayers()
 
-
-            var i = 0
-            while(i < mPlayerList.size){
-                if(mPlayerList[i].mIsChecked){
-                    mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
-                    mEditorOfSharedPrefsForPlayerList!!.remove(mPlayerList[i].mName + "MMR")
-                    mEditorOfSharedPrefsForPlayerList!!.apply()
-                    mPlayerList.removeAt(i)
-                }
-                else{
-                    i++
-                }
-            }
-
-            var newListSize = mPlayerList.size
-
-            //rearrranging position of players in Prefs
-            mPlayerList.forEachIndexed { index, player ->
-                mEditorOfSharedPrefsForPlayerList!!.putString("Player" + index.toString(), player.mName)
-                mEditorOfSharedPrefsForPlayerList!!.apply()
-            }
-            //deleting the duplicates in prefs
-            for(l in newListSize until originalListSize){
-                mEditorOfSharedPrefsForPlayerList!!.remove("Player" + i.toString())
-                mEditorOfSharedPrefsForPlayerList!!.apply()
-            }
-
-            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(mPlayerList, this) { item : Player -> itemOnRecyclerViewClicked(item)}
-
+            recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
         }
-        builder.setNegativeButton("No.. pls nOooo"){dialog, which ->
+
+        builder.setNegativeButton("No.. pls noooo"){dialog, which ->
             //Do something when user press the negativ button
-
         }
+
         val dialog: AlertDialog = builder.create()
         dialog.show()
-
     }
 
     fun doGameType(){
 
-        //Toast.makeText(applicationContext,mWhichGameType.toString(),Toast.LENGTH_SHORT).show()
-
         when(mWhichGameType){
-            0 -> startEndlosspiel()
+            0 -> startFreeMode()
             1 -> startTurnier()
             2 -> showStats()
         }
     }
 
-    fun startEndlosspiel(){
+    fun startFreeMode(){
 
-        var selectedPlayers = mutableListOf<Player>()
+        val intent = Intent(this, FreeMode::class.java)
+        var selectedPlayers = arrayListOf<String>()
 
-        mPlayerList.forEachIndexed { index, player ->
+        data.mPlayers.forEachIndexed { index, player ->
 
             if(player.mIsChecked){
-                selectedPlayers.add(player)
+                selectedPlayers.add(player.mName)
             }
         }
         if(selectedPlayers.isEmpty() || selectedPlayers.size < 4){
@@ -250,13 +240,10 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
         }
         else{
+            intent.putExtra("selectedPlayerList",selectedPlayers)
 
-            val matchupManager: MatchupManager = MatchupManager(selectedPlayers)
-            val matchup = matchupManager.getNextMatchup()
-            textView6.text = matchup.second.mPlayers[0].mName
-            textView7.text = matchup.second.mPlayers[1].mName
-            textView8.text = matchup.second.mPlayers[2].mName
-            textView9.text = matchup.second.mPlayers[3].mName
+            startActivity(intent)
+
         }
 
 
@@ -266,11 +253,12 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     }
 
+    //TODO: remove or renew
     fun showStats(){
 
         var selectedPlayers = mutableListOf<Player>()
 
-        mPlayerList.forEachIndexed { index, player ->
+        data.mPlayers.forEachIndexed { index, player ->
 
             if(player.mIsChecked){
                 selectedPlayers.add(player)
@@ -310,6 +298,39 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             val dialog: AlertDialog = builder.create()
             dialog.show()
 
+        }
+    }
+
+    fun checkFileIOPermission()
+    {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),REQUEST_PERMISSION_EXTERNAL_WRITE)
+
+            // REQUEST_PERMISSION_EXTERNAL_WRITE is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+        }
+        else
+        {
+            permissionGranted = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_PERMISSION_EXTERNAL_WRITE ->  permissionGranted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
     }
 

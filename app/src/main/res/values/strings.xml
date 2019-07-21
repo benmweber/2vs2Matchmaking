@@ -3,7 +3,7 @@
 
 
     <string name="action_settings">Settings</string>
-    <string name="Do">lul</string>
+    <string name="Do">START</string>
     <string name="team1">Team 1</string>
     <string name="team2">Team 2</string>
     <string name="spieler1">Spieler 1:</string>
@@ -19,13 +19,21 @@
     <string name="no_playerName">Bitte einen Namen eingeben</string>
     <string name="mmrdiff">MMRDiff:</string>
     <string name="showStats">Show Stats</string>
-    <string name="löschen">Spieler löschen</string>
-    <string name ="skip">Skip Duel</string>
+    <string name="löschen">Spieler Löschen</string>
+    <string name="skip">Skip</string>
+
+    <string name="matchupTitle">Current matchup</string>
 
     <string-array name="Spieloptionen">
         <item>Endlosspiel</item>
         <item>Turnier</item>
         <item>Custom</item>
     </string-array>
+    <string name="title_activity_free_mode">FreeMode</string>
+    <string name="finished">FINISHED</string>
+    <string name="manualMatchup">Setup next matchup</string>
+    <string name="set1">set 1</string>
+    <string name="set3">set 3</string>
+    <string name="set2">set 2</string>
 
 </resources>
