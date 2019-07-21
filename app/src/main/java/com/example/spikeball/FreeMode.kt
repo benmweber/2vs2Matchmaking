@@ -214,6 +214,7 @@ class FreeMode : AppCompatActivity() {
             toast.show()
 
             matchupMgr!!.resetMatchupHistory()
+
             displayMatchup(matchupMgr!!.getNextMatchup().second)
         }
     }

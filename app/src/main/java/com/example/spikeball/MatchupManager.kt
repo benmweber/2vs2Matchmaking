@@ -106,13 +106,16 @@ class MatchupManager(players:MutableList<Player>)
         mCached = true
     }
 
+    fun cacheLastMatchupFromHistory()
+    {
+        mCachedMatchup = mMatchupHistory.last()
+        mCached = true
+    }
+
     fun resetMatchupHistory()
     {
-        // reset scores, add pending matchup temporarily to history, then clear, so that there is not the same matchup after reset
-        mMatchupHistory.add(mPendingMatchup)
         // cache matchup for improved matchup generation
-        cachePendingMatchup()
-        updateProbabilityScores()
+        cacheLastMatchupFromHistory()
         mMatchupHistory.clear()
     }
 
@@ -130,7 +133,7 @@ class MatchupManager(players:MutableList<Player>)
         var finished = false
         var counter = 0
         var teamRetries = 0
-        val counterThreshold = 1000*mPlayers.size
+        val counterThreshold = 2000*mPlayers.size
 
 
         while(!finished && counter < counterThreshold)
