@@ -133,19 +133,37 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         }
 
         clipboardLoadButton.setOnClickListener{
-            val clipMgr = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
-            val clipData = clipMgr.primaryClip.getItemAt(0).text.toString()
+            //Toast.makeText(applicationContext,"Add Button Pressed",Toast.LENGTH_SHORT).show()
+            // Initialize a new instance of
+            val builder = AlertDialog.Builder(this@MainActivity)
 
-            if(clipData != "" && clipData != null && clipData.contains("{"))
-            {
-                Toast.makeText(applicationContext,data.importFromDataString(clipData), Toast.LENGTH_LONG).show()
-                recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+            // Set the alert dialog title
+            builder.setTitle("Load data from clipboard")
+            builder.setMessage("Are you sure?")
+            builder.setPositiveButton("Yes"){ dialog, which ->
+
+                val clipMgr = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+                val clipData = clipMgr.primaryClip.getItemAt(0).text.toString()
+
+                if(clipData != "" && clipData != null && clipData.contains("{") && clipData.contains("}"))
+                {
+                    Toast.makeText(applicationContext,data.importFromDataString(clipData), Toast.LENGTH_LONG).show()
+                    recyclerViewerForPlayerList.adapter = MyRecyclerViewerAdapter(data.mPlayers, this) { item : Player -> itemOnRecyclerViewClicked(item)}
+                }
+                else
+                {
+                    Toast.makeText(applicationContext,"NO CORRECT DATA IN CLIPBOARD! Copy data first ...", Toast.LENGTH_LONG).show()
+                }
+
             }
-            else
-            {
-                Toast.makeText(applicationContext,"NO CORRECT DATA IN CLIPBOARD! Copy data first ...", Toast.LENGTH_LONG).show()
+
+            builder.setNegativeButton("Cancel"){dialog, which ->
             }
+
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
         }
 
        /* telegramImportButton.setOnClickListener{
