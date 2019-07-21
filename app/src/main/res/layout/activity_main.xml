@@ -108,15 +108,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/clipboardLoadButton"
-            app:layout_constraintTop_toTopOf="@+id/deletePlayersButton"
-            app:layout_constraintStart_toEndOf="@+id/deletePlayersButton" android:layout_marginStart="48dp"/>
+            app:layout_constraintEnd_toEndOf="@+id/addPlayerButton"
+            app:layout_constraintTop_toTopOf="@+id/deletePlayersButton"/>
     <Button
             android:text="SHARE DATA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/shareButton"
             app:layout_constraintEnd_toEndOf="@+id/clipboardLoadButton"
-            app:layout_constraintTop_toBottomOf="@+id/clipboardLoadButton"/>
+            app:layout_constraintTop_toBottomOf="@+id/clipboardLoadButton"
+    />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
