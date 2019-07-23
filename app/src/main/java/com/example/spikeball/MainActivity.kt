@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             val builder = AlertDialog.Builder(this@MainActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Stats")
+            builder.setTitle("Stats (MMR/w/l/sw/sl/pw/pl")
 
             builder.setMessage("no players selected dipshit")
             builder.setNeutralButton("OK, i guess i suck") { _, _ -> }
@@ -302,13 +302,13 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
             val arrayOfSelectedPlayers = arrayOfNulls<String>(selectedPlayers.size)
             arrayOfSelectedPlayers.forEachIndexed { index, _ ->
                 arrayOfSelectedPlayers[index] =
-                    "Name: " + selectedPlayers[index].mName + ", MMR:" + selectedPlayers[index].mMMR.toString()
+                    selectedPlayers[index].mName + ": " + selectedPlayers[index].mMMR.toString() + " / " + selectedPlayers[index].mScoreWinsLosses[0] + "-" + selectedPlayers[index].mScoreWinsLosses[1] + " / " +selectedPlayers[index].mScoreSets[0] + "-" + selectedPlayers[index].mScoreSets[1] + " / " + selectedPlayers[index].mScorePoints[0] + "-" + selectedPlayers[index].mScorePoints[1]
             }
 
             val builder = AlertDialog.Builder(this@MainActivity)
 
             // Set the alert dialog title
-            builder.setTitle("Stats")
+            builder.setTitle("Stats MMR/w/l/sw/sl/pw/pl")
 
             builder.setItems(arrayOfSelectedPlayers) { _, _ -> }
             builder.setNeutralButton("OK") { _, _ -> }
