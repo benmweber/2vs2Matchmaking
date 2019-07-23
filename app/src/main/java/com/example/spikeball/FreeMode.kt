@@ -35,6 +35,11 @@ class FreeMode : AppCompatActivity() {
         // initialize matchup manager
         matchupMgr = MatchupManager(newList)
 
+        // simulate and show max number of matchups
+        val toast = Toast.makeText(applicationContext,"Max nr of matchups: " + matchupMgr!!.mMaxNumberMatchups, Toast.LENGTH_LONG)
+        toast.setGravity(0,0,100)
+        toast.show()
+
         // display first matchup
         displayMatchup(matchupMgr!!.getNextMatchup().second)
 

@@ -9,6 +9,12 @@ class MatchupManager(players:MutableList<Player>)
     var mPendingMatchup = Matchup()
     var mCachedMatchup = Matchup()
     var mCached = false
+    var mMaxNumberMatchups = 0
+
+    init
+    {
+        calcMaxNumberMatchups()
+    }
 
     // parameters
     private val mDepth = 2
@@ -17,6 +23,7 @@ class MatchupManager(players:MutableList<Player>)
     fun addPlayer(player:Player)
     {
         mPlayers.add(player)
+        calcMaxNumberMatchups()
     }
 
     // Rules:
@@ -119,24 +126,30 @@ class MatchupManager(players:MutableList<Player>)
         mMatchupHistory.clear()
     }
 
+    // credits to bims & ello for premium equation
+    // updates member variable and returns value
+    fun calcMaxNumberMatchups() : Int
+    {
+        val n =mPlayers.size.toDouble()
+        mMaxNumberMatchups = (( (n * n - n) / 8.0 )* ( n * n - 5.0*n + 6.0 )).toInt()
+        return mMaxNumberMatchups
+    }
+
     // Gets a matchup that has not been played yet
     // Example: 4 players -> A B C D
     // AB vs CD
     // AC vs BD
     // AD vs BC
     // -> 3 matchups
-
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
         var resultingMatchup = Matchup()
 
         var finished = false
-        var counter = 0
         var teamRetries = 0
-        val counterThreshold = 2000*mPlayers.size
 
 
-        while(!finished && counter < counterThreshold)
+        while(!finished && mMaxNumberMatchups > mMatchupHistory.size)
         {
             val tempPlayers = mutableListOf<Player>()
             for(i in 0..3)
@@ -197,8 +210,6 @@ class MatchupManager(players:MutableList<Player>)
                     }
                 }
             }
-
-            counter++
         }
 
         mCached = false

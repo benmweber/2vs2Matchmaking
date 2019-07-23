@@ -34,7 +34,7 @@ class ViewHolder (view: View) : RecyclerView.ViewHolder(view){
     val playerType = view.PlayerType
 
     fun bind(pl: Player, clickListener: (Player) -> Unit){
-        itemView.PlayerType.text = pl.mName + " (" +pl.mScoreWinsLosses[0] +"/" + pl.mScoreWinsLosses[1] + " - " + pl.mScorePoints[0]+"/"+pl.mScorePoints[1] +")"
+        itemView.PlayerType.text = pl.mName
         itemView.setOnClickListener {
             clickListener(pl)
             itemView.PlayerType.isChecked = !itemView.PlayerType.isChecked
