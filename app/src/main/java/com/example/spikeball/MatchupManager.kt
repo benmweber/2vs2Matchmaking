@@ -20,6 +20,8 @@ class MatchupManager(players:MutableList<Player>)
     private val mDepth = 2
     private val mChangeFactor = 0.1
 
+
+    // TODO: add button in free mode
     fun addPlayer(player:Player)
     {
         mPlayers.add(player)
@@ -141,6 +143,8 @@ class MatchupManager(players:MutableList<Player>)
     // AC vs BD
     // AD vs BC
     // -> 3 matchups
+
+    //TODO: implement "Fairplay mode", with custom max mmr difference
     fun getNextMatchup() : Pair<Boolean,Matchup>
     {
         var resultingMatchup = Matchup()

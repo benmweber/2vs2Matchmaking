@@ -28,7 +28,7 @@ import android.widget.Toast
 
 class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
-    private var mListOfGameTypes = arrayOf("FreeMode", "Turnier", "ShowStats")
+    private var mListOfGameTypes = arrayOf("FreeMode", "Turnier")
     private var mWhichGameType = 0
 
     private val data = DataManager(this)
@@ -111,6 +111,10 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         deletePlayersButton.setOnClickListener {
             // Do something in response to button
             deletePlayers()
+        }
+
+        statButton.setOnClickListener{
+            showStats()
         }
 
      /*   exportButton.setOnClickListener{
@@ -228,7 +232,6 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
         when(mWhichGameType){
             0 -> startFreeMode()
             1 -> startTurnier()
-            2 -> showStats()
         }
     }
 
@@ -271,7 +274,7 @@ class MainActivity : AppCompatActivity(),AdapterView.OnItemSelectedListener {
 
     }
 
-    //TODO: remove or renew
+    //TODO: move to button, also in free mode
     fun showStats(){
 
         var selectedPlayers = mutableListOf<Player>()
